@@ -2,6 +2,8 @@ package com.lendasoft.clubercompanion;
 
 import android.os.AsyncTask;
 
+import com.google.gson.Gson;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,11 +17,14 @@ import java.nio.charset.Charset;
 
 public class JsonParser {
 
+
+
     public static JSONObject readJsonFromUrl(String url) throws IOException, JSONException {
         InputStream is = new URL(url).openStream();
         try  {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             String jsonText = readAll(rd);
+            System.out.println(jsonText);
             return new JSONObject(jsonText);
         } finally {
             is.close();
@@ -32,23 +37,10 @@ public class JsonParser {
         while ((cp = rd.read()) != -1) {
             sb.append((char) cp);
         }
+        if (sb.toString().startsWith("[")){
+            return sb.toString().substring(1,sb.toString().length());
+        }
         return sb.toString();
     }
-
 }
 
-public class AsyncTaskExample extends AsyncTask<String, String, String> {
-
-    @Override
-    protected void onPreExecute() {
-    }
-
-    @Override
-    protected String doInBackground(String... url) {
-        return ;
-    }
-
-    @Override
-    protected void onPostExecute(String stringFromDoInBackground) {
-    }
-}
