@@ -13,7 +13,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TabHost;
+import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,7 +29,7 @@ import java.util.ArrayList;
 public class Mesas extends ActionBarActivity {
 
     JSONObject jsonObject = new JSONObject();
-    String url = "http://cluberapidev.azurewebsites.net/api/order/queryuserid/?userid=2053";
+    String url = "http://cluberapidev.azurewebsites.net/api/order/queryuserid/?userid=2053";//TODO:Debemos agregarle el id del mesero
     String [] objetos = new String[3];
 
     private static Button   btn_test;
@@ -69,13 +71,15 @@ public class Mesas extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
+                //El parametro id nos dice que row del listview le hicimos click
+                System.out.println(id);
                 //Aqui creamos una orden correspondiente al row para pasar al siguiente view
                 OBJ_ORDEN orden = new OBJ_ORDEN();
                 orden.setOrderId(objetos[0]);
                 orden.setTableNumber(objetos[1]);
                 orden.setTotalPayment(objetos[2]);
                 orden.setItems(new String[0]);
-                //
+                //Serializamos el objeto orden para que pueda ser pasado
                 Intent intent = new Intent(getApplicationContext(),Detalle.class);
                 Bundle mBundle = new Bundle();
                 mBundle.putSerializable("OrdenTag",(Serializable)orden);
@@ -98,10 +102,6 @@ public class Mesas extends ActionBarActivity {
 
     }
 
-    public void GotoDetalle(){
-
-
-    }
 
     public void Test() {
         btn_test = (Button) findViewById(R.id.mesasTestbtn);
@@ -149,6 +149,7 @@ public class Mesas extends ActionBarActivity {
         protected String[] doInBackground(String... url) {
             try {
                 jsonObject = JsonParser.readJsonFromUrl(url[0]);
+                //JSONArray jarr = jsonObject.getJSONArray("");
                 objetos[0] = jsonObject.getString("OrderId");
                 objetos[1] = jsonObject.getString("Total");
                 objetos[2] = jsonObject.getString("TableNumber");
