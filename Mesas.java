@@ -1,5 +1,6 @@
 package com.lendasoft.clubercompanion;
 
+import android.app.ListActivity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -24,31 +26,38 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
-public class Mesas extends ActionBarActivity {
-
+public class Mesas extends ListActivity {
+    private ArrayAdapter<String> adapter;
+    private ArrayAdapter<String> mAdapter;
     JSONObject jsonObject = new JSONObject();
-    String url = "http://cluberapidev.azurewebsites.net/api/order/queryuserid/?userid=2053";//TODO:Debemos agregarle el id del mesero
+    String url = "http://cluberapidev.azurewebsites.net/api/order/queryuserid/?userid=1038";//2053 TODO:Debemos agregarle el id del mesero
     String [] objetos = new String[3];
+    OBJ_ORDEN [] ordenes = new OBJ_ORDEN[250];//Asumimos que tendra 250 ordenes pendientes
 
     private static Button   btn_test;
     private ListView list;
-    private ArrayAdapter<String> adapter;
     private ArrayList<String> arrayList;
-
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mesas);
-             Test();
+        arrayList = new ArrayList<String>();
+        new AsyncTaskExample().execute(url);
+
+        // Set up ListView example
+        String[] items = new String[20];
+        for (int i = 0; i < items.length; i++) {
+            items[i] = "Item " + (i + 1);
+        }
 
 
 //Creamos las TABS
         TabHost tabHost = (TabHost) findViewById(R.id.tabHost);
-
         tabHost.setup();
 
         TabHost.TabSpec tabSpec = tabHost.newTabSpec("Pendientes");
@@ -61,37 +70,38 @@ public class Mesas extends ActionBarActivity {
         tabSpec.setIndicator("Atendidas");
         tabHost.addTab(tabSpec);
 
-//Creamos la LISTA
-        list = (ListView) findViewById(R.id.listView);
-        arrayList = new ArrayList<String>();
 
-        adapter = new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_spinner_item,arrayList);
-        list.setAdapter(adapter);//Le ponemos a nuestra lista el adaptador de datos
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {//Cuando seleccionemos una fila iremos a la pantalla de detalle
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position,
-                                    long id) {
-                //El parametro id nos dice que row del listview le hicimos click
-                System.out.println(id);
-                //Aqui creamos una orden correspondiente al row para pasar al siguiente view
-                OBJ_ORDEN orden = new OBJ_ORDEN();
-                orden.setOrderId(objetos[0]);
-                orden.setTableNumber(objetos[1]);
-                orden.setTotalPayment(objetos[2]);
-                orden.setItems(new String[0]);
-                //Serializamos el objeto orden para que pueda ser pasado
-                Intent intent = new Intent(getApplicationContext(),Detalle.class);
-                Bundle mBundle = new Bundle();
-                mBundle.putSerializable("OrdenTag",(Serializable)orden);
-                intent.putExtras(mBundle);
-                if (intent != null) {
-                    //Aqui pasamos el objeto mesa para mostrar su detalle
-                    startActivity(intent);
-                }
-            }
-        });
+        mAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1,
+                android.R.id.text1,arrayList);
+        setListAdapter(mAdapter);
 
-        new AsyncTaskExample().execute(url);
+        ListView listView = getListView();
+        // Create a ListView-specific touch listener. ListViews are given special treatment because
+        // by default they handle touches for their list items... i.e. they're in charge of drawing
+        // the pressed state (the list selector), handling list item clicks, etc.
+        SwipeDismissListViewTouchListener touchListener =
+                new SwipeDismissListViewTouchListener(
+                        listView,
+                        new SwipeDismissListViewTouchListener.DismissCallbacks() {
+                            @Override
+                            public boolean canDismiss(int position) {
+                                return true;
+                            }
+
+                            @Override
+                            public void onDismiss(ListView listView, int[] reverseSortedPositions) {
+                                for (int position : reverseSortedPositions) {
+                                    mAdapter.remove(mAdapter.getItem(position));
+                                }
+                                mAdapter.notifyDataSetChanged();
+                            }
+                        });
+        listView.setOnTouchListener(touchListener);
+        // Setting this scroll listener is required to ensure that during ListView scrolling,
+        // we don't look for swipes.
+        listView.setOnScrollListener(touchListener.makeScrollListener());
+
 
         //Agregamos elementos a la lista
 
@@ -103,18 +113,25 @@ public class Mesas extends ActionBarActivity {
     }
 
 
-    public void Test() {
-        btn_test = (Button) findViewById(R.id.mesasTestbtn);
-        btn_test.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //Iniciamos la tarea asincrona
-                        new AsyncTaskExample().execute(url);
-                    }
-            }
-        );
+
+
+    @Override
+    protected void onListItemClick(ListView listView, View view, int position, long id) {
+        Toast.makeText(this,
+                "Clicked " + getListAdapter().getItem(position).toString(),
+                Toast.LENGTH_SHORT).show();
+        OBJ_ORDEN orden = ordenes[position];
+        //Serializamos el objeto orden para que pueda ser pasado
+        Intent intent = new Intent(getApplicationContext(),Detalle.class);
+        Bundle mBundle = new Bundle();
+        mBundle.putSerializable("OrdenTag",(Serializable)orden);
+        intent.putExtras(mBundle);
+        if (intent != null) {
+            //Aqui pasamos el objeto mesa para mostrar su detalle
+            startActivity(intent);
+        }
     }
+
         @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -138,6 +155,10 @@ public class Mesas extends ActionBarActivity {
 
     }
 
+
+
+
+
     public class AsyncTaskExample extends AsyncTask<String, String, String[]> {
 
         @Override
@@ -149,7 +170,27 @@ public class Mesas extends ActionBarActivity {
         protected String[] doInBackground(String... url) {
             try {
                 jsonObject = JsonParser.readJsonFromUrl(url[0]);
-                //JSONArray jarr = jsonObject.getJSONArray("");
+                JSONArray jsonarray = JsonParser.readJsonArrayFromURL(url[0]);
+                for(int i=0; i<jsonarray.length(); i++){
+                    JSONObject obj = jsonarray.getJSONObject(i);
+
+                    String OrderId = obj.getString("OrderId");
+                    String totald = obj.getString("Total");
+                    String tablenumber = obj.getString("TableNumber");
+
+                    arrayList.add("Orden:" + OrderId);
+
+                    //Creamos el objeto orden
+                    OBJ_ORDEN orden = new OBJ_ORDEN();
+                    orden.setOrderId(OrderId);
+                    orden.setTableNumber(tablenumber);
+                    orden.setTotalPayment(totald);
+                    orden.setItems(new String[0]);
+                    ordenes[i] = orden;
+                }
+
+
+
                 objetos[0] = jsonObject.getString("OrderId");
                 objetos[1] = jsonObject.getString("Total");
                 objetos[2] = jsonObject.getString("TableNumber");
@@ -161,10 +202,7 @@ public class Mesas extends ActionBarActivity {
 
         @Override
         protected void onPostExecute(String[] stringFromDoInBackground) {
-            arrayList.add("Orden:" + objetos[0]);
-            arrayList.add("Orden de prueba #2");
-            arrayList.add("Orden de prueba #3");
-            adapter.notifyDataSetChanged();
+            mAdapter.notifyDataSetChanged();
         }
     }
 

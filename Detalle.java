@@ -26,7 +26,7 @@ public class Detalle extends ActionBarActivity implements Serializable {
         System.out.println(orden.TableNumber);
         list = (ListView) findViewById(R.id.listView);
         arrayList = new ArrayList<String>();
-        adapter = new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_spinner_item,arrayList);
+        adapter = new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_list_item_1,arrayList);
         list.setAdapter(adapter);//Le ponemos a nuestra lista el adaptador de datos
         arrayList.add("Orden: " + orden.OrderId);
         arrayList.add("Total: " + orden.TotalPayment);
