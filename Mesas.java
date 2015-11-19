@@ -174,6 +174,21 @@ public class Mesas extends ListActivity {
                     String OrderId = obj.getString("OrderId");
                     String totald = obj.getString("Total");
                     String tablenumber = obj.getString("TableNumber");
+                    JSONArray itemjson = obj.getJSONArray("Items");//Obtenemos la lista de items
+                    if (itemjson == null){
+
+                    }
+                    else{
+                    for(int x=0; x<jsonarray.length();x++) {
+                        JSONObject item = jsonarray.getJSONObject(i);
+                        String orderitemid = item.getString("OrderItemid");
+                        String itemprice = item.getString("Price");
+                        String placeitemid = item.getString("PlaceItemId");
+                        System.out.println("Price" + itemprice);
+                      }
+                    }
+
+
 
                     arrayList.add("Orden:" + OrderId);
 
