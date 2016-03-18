@@ -2,14 +2,17 @@ package com.lendasoft.clubercompanion;
 
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.parse.Parse;
+import com.parse.ParseInstallation;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,15 +24,16 @@ public class Login extends ActionBarActivity {
     String log_username;
     String log_password;
     String log_name;
-
+    JSONObject jsontest;
     private static EditText username;
     private static EditText password;
     private static Button   login_btn;
+    HTTP_Request req = new HTTP_Request();
 
     JSONObject jsonObject = new JSONObject();
-    String url = "http://cluberapidev.azurewebsites.net/api/user/querymobilephonenumber/?mobilephonenumber=";
+    JSONObject jsonwaiter = new JSONObject();
+    JSONObject waiter = new JSONObject();
     String [] login_object = new String[3];
-
 
 
 
@@ -38,6 +42,8 @@ public class Login extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         LoginButtonClicked();
+        Parse.initialize(this, "wptHWdzQOWT8LYaOmTVCZOD3PhU7WjlpQW2keSyi", "4jsVgExUQIiQoVOs1tWIcT32VO6uMGVHHGoR0QOr");
+        ParseInstallation.getCurrentInstallation().saveInBackground();
     }
 
     public void  LoginButtonClicked(){
@@ -50,8 +56,9 @@ public class Login extends ActionBarActivity {
           @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    url = url + username.getText();
-                    new AsyncTaskExample().execute(url);
+                    //url = url + username.getText();
+                    //new AsyncTaskExample().execute(url);
+
                 }
             }
         });
@@ -62,14 +69,9 @@ public class Login extends ActionBarActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(/*username.getText().toString().equals("testuser") &&*/
-                             password.getText().toString().equals(login_object[1])){
-                            Toast.makeText(Login.this,"Welcome " + log_name,Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent("com.lendasoft.clubercompanion.Mesas");
-                            startActivity(intent);
-                        } else{
-                            Toast.makeText(Login.this,"User and Password incorrect",Toast.LENGTH_SHORT).show();
-                        }
+                        String url = "http://apisbx.cluberapp.com/api/Companion/SignIn?userName=" + username.getText() + "&password=" + password.getText().toString();
+                        new AsyncTaskExample().execute(url);
+
                     }
                 }
         );
@@ -111,9 +113,11 @@ public class Login extends ActionBarActivity {
         protected String[] doInBackground(String... url) {
             try {
                 jsonObject = JsonParser.readJsonFromUrl(url[0]);
-                login_object[0] = jsonObject.getString("MobilePhoneNumber");
-                login_object[1] = jsonObject.getString("PIN");
-                login_object[2] = jsonObject.getString("Name");
+                login_object[0] = jsonObject.getString("SuccessfulSignIn");
+                jsonwaiter = jsonObject.getJSONObject("Waitperson");
+                login_object[1] = jsonwaiter.getString("WaitpersonId");
+                login_object[2] = jsonwaiter.getString("UserName");
+
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
             }
@@ -125,7 +129,17 @@ public class Login extends ActionBarActivity {
             log_username = login_object[0];
             log_password = login_object[1];
             log_name = login_object[2];
+
+            if(login_object[0] == "true") {
+                Toast.makeText(Login.this,"Welcome " + login_object[2],Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent("com.lendasoft.clubercompanion.Mesas");
+                intent.putExtra("Waiterid",login_object[1]);
+                startActivity(intent);
+            } else{
+                Toast.makeText(Login.this, "User and Password incorrect", Toast.LENGTH_SHORT).show();
+            }
         }
     }
+
 
 }

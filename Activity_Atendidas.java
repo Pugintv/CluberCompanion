@@ -1,28 +1,19 @@
 package com.lendasoft.clubercompanion;
 
-
 import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TabHost;
 
 import com.cjj.MaterialRefreshLayout;
 import com.cjj.MaterialRefreshListener;
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.api.GoogleApiClient;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,8 +22,10 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-
-public class Mesas extends ListActivity {
+/**
+ * Created by victorrosas on 3/16/16.
+ */
+public class Activity_Atendidas extends ListActivity {
 
     private ArrayAdapter pendingAdapter;
     private ArrayAdapter<String> nAdapter;
@@ -66,17 +59,6 @@ public class Mesas extends ListActivity {
     private ArrayList<String> arrayList2;
     private ArrayList<OBJ_ORDEN> atOrderList;
 
-
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
-
-    public Mesas() {
-    }
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -90,68 +72,36 @@ public class Mesas extends ListActivity {
         urlatended = "http://apisbx.cluberapp.com/api/Companion/QueryCompletedOrders?waitpersonId=" + waiterid;
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mesas);
+        setContentView(R.layout.list_atendidas);
 
 
         arrayList = new ArrayList<String>();
         penOrderlist = new ArrayList<OBJ_ORDEN>();
         pendingAdapter = new OrdenArrayAdapter(this, penOrderlist);
 
-        atOrderList = new ArrayList<OBJ_ORDEN>();
-        atendedAdapter = new OrdenArrayAdapter(this, atOrderList);
-        arrayList2 = new ArrayList<String>();
-
         //Nos traemos la informacion del WS
         new AsyncTaskExample().execute(urlpending);
 
-        //Inicializamos el boton de perfil
-        perfilClicked();
 
-        //
-        //Creamos las TABS
-        //
-        TabHost tabHost = (TabHost) findViewById(R.id.tabHost);
-        tabHost.setup();
+        listView = (ListView) findViewById(R.id.list2);
 
-        TabHost.TabSpec tabSpec = tabHost.newTabSpec("Pendientes");
-        tabSpec.setContent(R.id.layout1);//(R.id.tab1);
-        tabSpec.setIndicator("Pendientes");
-        tabHost.addTab(tabSpec);
+        String[] values = new String[] { "Android List View",
+                "Adapter implementation",
+                "Simple List View In Android",
+                "Create List View Android",
+                "Android Example",
+                "List View Source Code",
+                "List View Array Adapter",
+                "Android Example List View"
+        };
 
-        TabHost.TabSpec tabSpec2 = tabHost.newTabSpec("Atendidas");
-        tabSpec2.setContent(R.id.layout2);//(R.id.tab2);
-        tabSpec2.setIndicator("Atendidas");
-        tabHost.addTab(tabSpec2);
-
-        //
-        //Que pasa cuando cambiamos de TAB
-        //
-        /*tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
-            @Override
-            public void onTabChanged(String tabId) {
-                if ("Pendientes".equals(tabId)) {
-                    System.out.println("Pendientes");
-                    pendingAdapter.clear();
-                    new AsyncTaskExample().execute(urlpending);
-                }
-                if ("Atendidas".equals(tabId)) {
-                    System.out.println("Atendidas");
-                    atendedAdapter.clear();
-                    new AsyncTaskAtendidas().execute(urlatended);
-                }
-            }
-        });*/
-
-    //Definicion de los adaptadores de datos
+        //Definicion de los adaptadores de datos
         mAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1,
-                android.R.id.text1, arrayList);
-        setListAdapter(pendingAdapter);
+                android.R.id.text1,values);
+        //setListAdapter(pendingAdapter);
 
-
-
-
-        listView = getListView();
+        listView.setAdapter(mAdapter);
 
 
         // Create a ListView-specific touch listener. ListViews are given special treatment because
@@ -168,19 +118,7 @@ public class Mesas extends ListActivity {
 
                             @Override
                             public void onDismiss(ListView listView, int[] reverseSortedPositions) {
-                                for (int position : reverseSortedPositions) {
-                                   String Orderid = ordenes[position].OrderId;
-                                    String status = "0";
-                                    String url = "http://apisbx.cluberapp.com/api/Companion/ChangeOrderStatus?orderId=" + Orderid + "&status=" + status;
-                                   new AsyncTaskPost().execute(url);
 
-                                    //Eliminamos de los arreglos y lo pasamos al otro tab
-                                    atendedAdapter.add(pendingAdapter.getItem(position));
-                                    pendingAdapter.remove(pendingAdapter.getItem(position));
-                                    ordenes = ArrayUtils.remove(ordenes, position);
-                                }
-                                pendingAdapter.notifyDataSetChanged();
-                                atendedAdapter.notifyDataSetChanged();
                             }
                         });
 
@@ -192,39 +130,18 @@ public class Mesas extends ListActivity {
         listView.setOnTouchListener(touchListener);
         listView.setOnScrollListener(touchListener.makeScrollListener());
 
-        //Hacemos lo mismo para el otro listview
-        //listView2.setOnTouchListener(touchListener);
-        //listView2.setOnScrollListener(touchListener.makeScrollListener());
+        //
+        //PULL TO REFRESH
+        //
+        // Manejamos el pull to refresh de pendientes
 
-     //
-     //PULL TO REFRESH
-     //
-     // Manejamos el pull to refresh de pendientes
-
-    refresh = (MaterialRefreshLayout) findViewById(R.id.refresh);
-    refresh.setMaterialRefreshListener(new MaterialRefreshListener() {
-        @Override
-        public void onRefresh(MaterialRefreshLayout materialRefreshLayout) {
-            //Codigo que se hara en el refresh
-            pendingAdapter.clear();
-            new AsyncTaskExample().execute(urlpending);
-            refresh.finishRefresh();
-        }
-        @Override
-        public void onRefreshLoadMore(MaterialRefreshLayout materialRefreshLayout) {
-            //load more refreshing...
-        }
-    });
-
-    //Manejamos el pull to refresh de atendidas
-
-       refresh2 = (MaterialRefreshLayout) findViewById(R.id.refresh2);
+        refresh2 = (MaterialRefreshLayout) findViewById(R.id.refresh);
         refresh2.setMaterialRefreshListener(new MaterialRefreshListener() {
             @Override
             public void onRefresh(MaterialRefreshLayout materialRefreshLayout) {
                 //Codigo que se hara en el refresh
-                atendedAdapter.clear();
-                new AsyncTaskAtendidas().execute(urlatended);
+                pendingAdapter.clear();
+                new AsyncTaskExample().execute(urlpending);
                 refresh2.finishRefresh();
             }
             @Override
@@ -233,28 +150,11 @@ public class Mesas extends ListActivity {
             }
         });
 
-    //
-    //Termina pull to refresh
-    //
 
+        //
+        //Termina pull to refresh
+        //
 
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-    }
-
-    public void perfilClicked(){
-        btn_perfil = (Button) findViewById(R.id.btn_perfil);
-        btn_perfil.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent("com.lendasoft.clubercompanion.perfil");
-                        intent.putExtra("Waiterid",waiterid);
-                        startActivity(intent);
-                    }
-                }
-        );
     }
 
     public String valueSaved(){
@@ -270,105 +170,6 @@ public class Mesas extends ListActivity {
         mySharedPrefs.edit().putString("Waiterid", waiterid).commit();
     }
 
-    //Cuando seleccionamos una orden esta nos envia al detalle,pasamos la info para que cargue el detalle
-    @Override
-    protected void onListItemClick(ListView listView, View view, int position, long id) {
-        OBJ_ORDEN orden = ordenes[position];
-        //getListAdapter().getItem(position);
-
-        //Serializamos el objeto orden para que pueda ser pasado al detalle
-        Intent intent = new Intent(getApplicationContext(), Detalle.class);
-        intent.putExtra("Waiterid",waiterid);
-        Bundle mBundle = new Bundle();
-        mBundle.putSerializable("OrdenTag", (Serializable) orden);
-        intent.putExtras(mBundle);
-        if (intent != null) {
-            //Aqui pasamos el objeto mesa para mostrar su detalle
-            startActivity(intent);
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_mesas, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-
-    }
-    //
-    //Parseamos la fecha para desplegarla en el campo
-    //
-    public String parsedate(String date) {//Asumimos a date como: YYYY-MM-DDTHH:mm:ss:zzz
-        String hour;
-        hour = date.substring(date.indexOf('T') + 1, date.indexOf(':') + 3);
-        return hour;
-    }
-
-    //
-    //Le damos formato al string para que mantenga su forma
-    //
-    public String formatString(String tablenumber, String Orderid, String timestamp) {
-        return "";
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "Mesas Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app deep link URI is correct.
-                Uri.parse("android-app://com.lendasoft.clubercompanion/http/host/path")
-        );
-        AppIndex.AppIndexApi.start(client, viewAction);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "Mesas Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app deep link URI is correct.
-                Uri.parse("android-app://com.lendasoft.clubercompanion/http/host/path")
-        );
-        AppIndex.AppIndexApi.end(client, viewAction);
-        client.disconnect();
-    }
-
-    public void changeorderstate(String url) throws IOException, JSONException {
-        JsonParser.PostRequest(url);
-    }
 
     //
     //TRAEMOS LAS PENDIENTES
@@ -488,6 +289,27 @@ public class Mesas extends ListActivity {
         }
     }
 
+
+
+    //Cuando seleccionamos una orden esta nos envia al detalle,pasamos la info para que cargue el detalle
+    @Override
+    protected void onListItemClick(ListView listView, View view, int position, long id) {
+        OBJ_ORDEN orden = ordenes[position];
+        //getListAdapter().getItem(position);
+
+        //Serializamos el objeto orden para que pueda ser pasado al detalle
+        Intent intent = new Intent(getApplicationContext(), Detalle.class);
+        intent.putExtra("Waiterid",waiterid);
+        Bundle mBundle = new Bundle();
+        mBundle.putSerializable("OrdenTag", (Serializable) orden);
+        intent.putExtras(mBundle);
+        if (intent != null) {
+            //Aqui pasamos el objeto mesa para mostrar su detalle
+            startActivity(intent);
+        }
+    }
+
+
     //
     //METODO GET PARA ATENDIDAS
     //
@@ -536,7 +358,7 @@ public class Mesas extends ListActivity {
 
 
                     //Creamos el objeto orden
-                    atOrderList.add(new OBJ_ORDEN(OrderId, sOrdertablenumber, dOrdertotal, obj_items, this.getState(dOrderstate), sUserfullname, sOrdertip));
+                    penOrderlist.add(new OBJ_ORDEN(OrderId, sOrdertablenumber, dOrdertotal, obj_items, this.getState(dOrderstate), sUserfullname, sOrdertip));
                     OBJ_ORDEN orden = new OBJ_ORDEN();
                     orden.setOrderId(OrderId);
                     orden.setTableNumber(sOrdertablenumber);
@@ -544,7 +366,7 @@ public class Mesas extends ListActivity {
                     orden.setItems(obj_items);
                     orden.setTip(sOrdertip);
                     orden.setUserfullname(sUserfullname);
-                    completedOrders[i] = orden;
+                    ordenes[i] = orden;
                 }
 
             } catch (IOException | JSONException e) {
@@ -555,9 +377,8 @@ public class Mesas extends ListActivity {
 
         @Override
         protected void onPostExecute(String[] stringFromDoInBackground) {
-            //nAdapter.notifyDataSetChanged();
-            System.out.println("Completed elements:" + atendedAdapter.getCount());
-            atendedAdapter.notifyDataSetChanged();
+            mAdapter.notifyDataSetChanged();
+            pendingAdapter.notifyDataSetChanged();
         }
 
         //
@@ -574,7 +395,4 @@ public class Mesas extends ListActivity {
         }
 
     }
-
 }
-
-

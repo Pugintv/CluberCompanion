@@ -1,11 +1,13 @@
 package com.lendasoft.clubercompanion;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import java.io.Serializable;
@@ -17,11 +19,18 @@ public class Detalle extends ActionBarActivity implements Serializable {
     private ListView list;
     private ArrayAdapter<String> adapter;
     private ArrayList<String> arrayList;
+    private ArrayList<OBJ_ITEM> itemList;
+    private static Button btn_volver;
+    String waiterid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalle);
+        this.ToordersButtonClicked();
+
+        waiterid = getIntent().getExtras().getString("Waiterid");
+
         OBJ_ORDEN orden = (OBJ_ORDEN) getIntent().getSerializableExtra("OrdenTag");
         System.out.println(orden.TableNumber);
         list = (ListView) findViewById(R.id.listView);
@@ -31,6 +40,58 @@ public class Detalle extends ActionBarActivity implements Serializable {
         arrayList.add("Orden: " + orden.OrderId);
         arrayList.add("Total: " + orden.TotalPayment);
         arrayList.add("Mesa: " + orden.TableNumber);
+        arrayList.add("Orden");
+        itemList = formatOrder(orden.Items);
+        for (Integer i =0;i<itemList.size();i++) {
+        OBJ_ITEM item = itemList.get(i);
+            arrayList.add("Art:" + item.sPlaceitemname + " Qty: " + item.dItemQuantity.toString() + "           $" + item.sItemprice);
+        }
+        arrayList.add("");
+        arrayList.add("Cliente:" + orden.Userfullname);
+        arrayList.add("Propina:" + orden.Tip);
+    }
+
+    public void ToordersButtonClicked(){
+        btn_volver = (Button)findViewById(R.id.btn_volverdetalle);
+        btn_volver.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent("com.lendasoft.clubercompanion.Mesas");
+                        intent.putExtra("Waiterid",waiterid);
+                        startActivity(intent);
+                    }
+                }
+        );
+    }
+
+    public ArrayList<OBJ_ITEM> formatOrder(ArrayList<OBJ_ITEM> order){
+        ArrayList<OBJ_ITEM> formattedOrder = new ArrayList<OBJ_ITEM>();
+        for (Integer i =0;i<order.size();i++) {
+            OBJ_ITEM item = order.get(i); //Obtenemos el item de la orden
+            String itemId = item.sPlaceitemid; //Obtenemos su id
+
+            if (containsitem(formattedOrder,itemId)){
+
+            }
+
+            else {
+                for (Integer x = 0; x < order.size(); x++) { //Comparamos su id para ver si coincide con el id de otros items de la orden
+                    if (itemId.equals(order.get(x).sPlaceitemid)) {
+                        item.setdItemQuantity(item.getdItemQuantity() + 1);
+                    }
+                }
+                formattedOrder.add(item);
+            }
+        }
+        return formattedOrder;
+    }
+
+    public boolean containsitem(ArrayList<OBJ_ITEM> order,String orderid){
+        for (Integer i = 0; i<order.size();i++) {
+            if (order.get(i).sPlaceitemid.equals(orderid)) { return true;}
+        }
+        return  false;
     }
 
     @Override
