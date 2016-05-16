@@ -9,12 +9,20 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 
 public class Detalle extends ActionBarActivity implements Serializable {
+
+    String txtinfo;
+
+    TextView lblinfo;
+    TextView lbltotal;
+    TextView lbltablenum;
+    TextView lbldate;
 
     private ListView list;
     private ArrayAdapter<String> adapter;
@@ -29,6 +37,11 @@ public class Detalle extends ActionBarActivity implements Serializable {
         setContentView(R.layout.activity_detalle);
         this.ToordersButtonClicked();
 
+        lbldate = (TextView)findViewById(R.id.lblfecha);
+        lbltablenum = (TextView)findViewById(R.id.lbltablenumber);
+        lbltotal = (TextView)findViewById(R.id.lbltotal);
+        lblinfo = (TextView)findViewById(R.id.Lblinfo);
+
         waiterid = getIntent().getExtras().getString("Waiterid");
 
         OBJ_ORDEN orden = (OBJ_ORDEN) getIntent().getSerializableExtra("OrdenTag");
@@ -37,14 +50,19 @@ public class Detalle extends ActionBarActivity implements Serializable {
         arrayList = new ArrayList<String>();
         adapter = new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_list_item_1,arrayList);
         list.setAdapter(adapter);//Le ponemos a nuestra lista el adaptador de datos
-        arrayList.add("Orden: " + orden.OrderId);
+
+        /*arrayList.add("Orden: " + orden.OrderId);
         arrayList.add("Total: " + orden.TotalPayment);
-        arrayList.add("Mesa: " + orden.TableNumber);
-        arrayList.add("Orden");
+        arrayList.add("Mesa: " + orden.TableNumber);*/
+        lbldate.setText(orden.TimeStamp);
+        lbltablenum.setText("Mesa:" + orden.TableNumber);
+        lblinfo.setText("Orden:" + orden.OrderId);
+        lbltotal.setText("Total: $" + orden.TotalPayment);
+
         itemList = formatOrder(orden.Items);
         for (Integer i =0;i<itemList.size();i++) {
         OBJ_ITEM item = itemList.get(i);
-            arrayList.add("Art:" + item.sPlaceitemname + " Qty: " + item.dItemQuantity.toString() + "           $" + item.sItemprice);
+            arrayList.add(item.sPlaceitemname + " X " + item.dItemQuantity.toString() + "           = $" + item.sItemprice);
         }
         arrayList.add("");
         arrayList.add("Cliente:" + orden.Userfullname);

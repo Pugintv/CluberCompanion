@@ -7,10 +7,12 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -29,7 +31,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class Mesas extends ListActivity {
@@ -41,6 +46,8 @@ public class Mesas extends ListActivity {
     private MaterialRefreshLayout refresh2;
     private ArrayAdapter atendedAdapter;
     private ArrayAdapter<String> mAdapter;
+
+    Long TimerInterval = 10000L;
 
     String waiterid;
     JSONObject jsonObject = new JSONObject();
@@ -57,6 +64,9 @@ public class Mesas extends ListActivity {
     OBJ_ORDEN[] completedOrders = new OBJ_ORDEN[250];//Ordenes completadas
     ArrayList<OBJ_ITEM> obj_items;
 
+    Integer RefreshType = 0;//0 para pendientes,1 para atendidas
+
+    private Handler handler = new Handler();
     private static Button btn_test;
     private ListView list;
     private ListView list2;
@@ -93,6 +103,7 @@ public class Mesas extends ListActivity {
         setContentView(R.layout.activity_mesas);
 
 
+
         arrayList = new ArrayList<String>();
         penOrderlist = new ArrayList<OBJ_ORDEN>();
         pendingAdapter = new OrdenArrayAdapter(this, penOrderlist);
@@ -126,21 +137,23 @@ public class Mesas extends ListActivity {
         //
         //Que pasa cuando cambiamos de TAB
         //
-        /*tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+        tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
             public void onTabChanged(String tabId) {
                 if ("Pendientes".equals(tabId)) {
                     System.out.println("Pendientes");
                     pendingAdapter.clear();
                     new AsyncTaskExample().execute(urlpending);
+                    RefreshType = 0;
                 }
                 if ("Atendidas".equals(tabId)) {
                     System.out.println("Atendidas");
                     atendedAdapter.clear();
                     new AsyncTaskAtendidas().execute(urlatended);
+                    RefreshType = 1;
                 }
             }
-        });*/
+        });
 
     //Definicion de los adaptadores de datos
         mAdapter = new ArrayAdapter<String>(this,
@@ -148,7 +161,9 @@ public class Mesas extends ListActivity {
                 android.R.id.text1, arrayList);
         setListAdapter(pendingAdapter);
 
-
+        nAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1,
+                android.R.id.text2,arrayList2);
 
 
         listView = getListView();
@@ -193,8 +208,37 @@ public class Mesas extends ListActivity {
         listView.setOnScrollListener(touchListener.makeScrollListener());
 
         //Hacemos lo mismo para el otro listview
-        //listView2.setOnTouchListener(touchListener);
-        //listView2.setOnScrollListener(touchListener.makeScrollListener());
+        listView2 = getListView();//(ListView) findViewById(R.id.list2);
+
+        SwipeDismissListViewTouchListener touchListener2 =
+                new SwipeDismissListViewTouchListener(
+                        listView2,
+                        new SwipeDismissListViewTouchListener.DismissCallbacks() {
+                            @Override
+                            public boolean canDismiss(int position) {
+                                return true;
+                            }
+
+                            @Override
+                            public void onDismiss(ListView listView, int[] reverseSortedPositions) {
+                                for (int position : reverseSortedPositions) {
+                                    String Orderid = completedOrders[position].OrderId;
+                                    String status = "8";
+                                    String url = "http://apisbx.cluberapp.com/api/Companion/ChangeOrderStatus?orderId=" + Orderid + "&status=" + status;
+                                    new AsyncTaskPost().execute(url);
+
+                                    //Eliminamos de los arreglos y lo pasamos al otro tab
+                                    //atendedAdapter.add(pendingAdapter.getItem(position));
+                                    //pendingAdapter.remove(pendingAdapter.getItem(position));
+                                    //ordenes = ArrayUtils.remove(ordenes, position);
+                                }
+                                //pendingAdapter.notifyDataSetChanged();
+                                //atendedAdapter.notifyDataSetChanged();
+                            }
+                        });
+
+        listView2.setOnTouchListener(touchListener2);
+        listView2.setOnScrollListener(touchListener2.makeScrollListener());
 
      //
      //PULL TO REFRESH
@@ -223,8 +267,11 @@ public class Mesas extends ListActivity {
             @Override
             public void onRefresh(MaterialRefreshLayout materialRefreshLayout) {
                 //Codigo que se hara en el refresh
+                setListView2();
                 atendedAdapter.clear();
                 new AsyncTaskAtendidas().execute(urlatended);
+                //Activity_Atendidas atendidas = new Activity_Atendidas();
+                //atendidas.refreshaction(waiterid);
                 refresh2.finishRefresh();
             }
             @Override
@@ -241,6 +288,9 @@ public class Mesas extends ListActivity {
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
+    //Refresh se ejecutara despues de 5 segundos
+        handler.postDelayed(runnable, 5000);
     }
 
     public void perfilClicked(){
@@ -256,6 +306,69 @@ public class Mesas extends ListActivity {
                 }
         );
     }
+
+
+
+    ///LISTVIEW2
+    //
+    //
+    public void setListView2(){
+
+        View atended = findViewById(R.id.layout2);
+        listView2 = (ListView) atended.findViewById(R.id.list2);
+        //listView2 = getListView();//(ListView) findViewById(R.id.list2);
+
+        nAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1,
+                android.R.id.text2,arrayList2);
+        //setListAdapter(nAdapter);
+    listView2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            System.out.println("TouchListView 2");
+            OBJ_ORDEN orden = completedOrders[position];
+
+            //Serializamos el objeto orden para que pueda ser pasado al detalle
+            Intent intent = new Intent(getApplicationContext(), Detalle.class);
+            intent.putExtra("Waiterid",waiterid);
+            Bundle mBundle = new Bundle();
+            mBundle.putSerializable("OrdenTag", (Serializable) orden);
+            intent.putExtras(mBundle);
+            if (intent != null) {
+                //Aqui pasamos el objeto mesa para mostrar su detalle
+                startActivity(intent);
+            }
+        }
+    });
+
+        SwipeDismissListViewTouchListener touchListener2 =
+                new SwipeDismissListViewTouchListener(
+                        listView2,
+                        new SwipeDismissListViewTouchListener.DismissCallbacks() {
+                            @Override
+                            public boolean canDismiss(int position) {
+                                return true;
+                            }
+
+                            @Override
+                            public void onDismiss(ListView listView, int[] reverseSortedPositions) {
+                                for (int position : reverseSortedPositions) {
+                                    String Orderid = completedOrders[position].OrderId;
+                                    String status = "8";
+                                    String url = "http://apisbx.cluberapp.com/api/Companion/ChangeOrderStatus?orderId=" + Orderid + "&status=" + status;
+                                    new AsyncTaskPost().execute(url);
+                                }
+
+                            }
+                        });
+
+        listView2.setOnTouchListener(touchListener2);
+        listView2.setOnScrollListener(touchListener2.makeScrollListener());
+    }
+
+    ///
+    //
+    // LISTVIEW2
 
     public String valueSaved(){
         SharedPreferences mySharedPrefs = PreferenceManager
@@ -274,7 +387,6 @@ public class Mesas extends ListActivity {
     @Override
     protected void onListItemClick(ListView listView, View view, int position, long id) {
         OBJ_ORDEN orden = ordenes[position];
-        //getListAdapter().getItem(position);
 
         //Serializamos el objeto orden para que pueda ser pasado al detalle
         Intent intent = new Intent(getApplicationContext(), Detalle.class);
@@ -398,7 +510,7 @@ public class Mesas extends ListActivity {
                     String OrderId = obj.getString("OrderId");
                     String dOrdertotal = obj.getString("Total");
                     String sOrdertablenumber = obj.getString("PlaceTableNumber");
-                    String Ordertimestamp = obj.getString("TimeStamp");
+                    String Ordertimestamp = formatdaystamp(obj.getString("TimeStamp"));
                     String sOrdertip = obj.getString("Tip");
                     String dOrderstatus = obj.getString("Status");
                     String sUserfullname = obj.getString("UserFullName");
@@ -419,7 +531,7 @@ public class Mesas extends ListActivity {
 
                     //Creamos el objeto orden
 
-                    penOrderlist.add(new OBJ_ORDEN(OrderId, sOrdertablenumber, dOrdertotal, obj_items, this.getState(dOrderstate), sUserfullname, sOrdertip));
+                    penOrderlist.add(new OBJ_ORDEN(OrderId, sOrdertablenumber, dOrdertotal, obj_items, this.getState(dOrderstate), sUserfullname, sOrdertip,Ordertimestamp));
                     OBJ_ORDEN orden = new OBJ_ORDEN();
                     orden.setOrderId(OrderId);
                     orden.setTableNumber(sOrdertablenumber);
@@ -427,10 +539,13 @@ public class Mesas extends ListActivity {
                     orden.setItems(obj_items);
                     orden.setTip(sOrdertip);
                     orden.setUserfullname(sUserfullname);
+                    orden.setTimeStamp(Ordertimestamp);
                     ordenes[i] = orden;
                 }
 
             } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            } catch (ParseException e) {
                 e.printStackTrace();
             }
             return objetos;
@@ -447,6 +562,12 @@ public class Mesas extends ListActivity {
             else return R.drawable.graycircle;
         }
 
+        public String formatdaystamp(String timestamp) throws ParseException {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+            Date date = dateFormat.parse(timestamp);
+            SimpleDateFormat dateFormatFinal = new SimpleDateFormat("HH:mm-dd/MM/yyyy");
+            return dateFormatFinal.format(date);
+        }
 
         public void Queryorders(){
 
@@ -516,7 +637,7 @@ public class Mesas extends ListActivity {
                     String OrderId = obj.getString("OrderId");
                     String dOrdertotal = obj.getString("Total");
                     String sOrdertablenumber = obj.getString("TableNumber");
-                    String Ordertimestamp = obj.getString("TimeStamp");
+                    String Ordertimestamp = formatdaystamp(obj.getString("TimeStamp"));
                     String sOrdertip = obj.getString("Tip");
                     String dOrderstatus = obj.getString("Status");
                     String sUserfullname = obj.getString("UserFullName");
@@ -536,7 +657,8 @@ public class Mesas extends ListActivity {
 
 
                     //Creamos el objeto orden
-                    atOrderList.add(new OBJ_ORDEN(OrderId, sOrdertablenumber, dOrdertotal, obj_items, this.getState(dOrderstate), sUserfullname, sOrdertip));
+                    /*penOrderlist.add(new OBJ_ORDEN(OrderId, sOrdertablenumber, dOrdertotal, obj_items, this.getState(dOrderstate), sUserfullname, sOrdertip));*/
+                    atOrderList.add(new OBJ_ORDEN(OrderId, sOrdertablenumber, dOrdertotal, obj_items, this.getState(dOrderstate), sUserfullname, sOrdertip,Ordertimestamp));
                     OBJ_ORDEN orden = new OBJ_ORDEN();
                     orden.setOrderId(OrderId);
                     orden.setTableNumber(sOrdertablenumber);
@@ -544,10 +666,15 @@ public class Mesas extends ListActivity {
                     orden.setItems(obj_items);
                     orden.setTip(sOrdertip);
                     orden.setUserfullname(sUserfullname);
+                    orden.setTimeStamp(formatdaystamp(Ordertimestamp));
+
+                    //ordenes[i] = orden;
                     completedOrders[i] = orden;
                 }
 
             } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            } catch (ParseException e) {
                 e.printStackTrace();
             }
             return objetos;
@@ -555,9 +682,16 @@ public class Mesas extends ListActivity {
 
         @Override
         protected void onPostExecute(String[] stringFromDoInBackground) {
-            //nAdapter.notifyDataSetChanged();
+            //mAdapter.notifyDataSetChanged();
+            //pendingAdapter.notifyDataSetChanged();
+            nAdapter.notifyDataSetChanged();
             System.out.println("Completed elements:" + atendedAdapter.getCount());
             atendedAdapter.notifyDataSetChanged();
+
+            View atended = findViewById(R.id.layout2);
+            listView2 = (ListView) atended.findViewById(R.id.list2);
+            listView2.setAdapter(atendedAdapter);
+            setListView2();
         }
 
         //
@@ -573,8 +707,37 @@ public class Mesas extends ListActivity {
             else return R.drawable.graycircle;
         }
 
+        public String formatdaystamp(String timestamp) throws ParseException {
+            /*SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+            System.out.println("TIMESTAMP:" + timestamp);
+            Date date = dateFormat.parse(timestamp);
+            SimpleDateFormat dateFormatFinal = new SimpleDateFormat("HH:mm-dd/MM/yyyy");
+            return dateFormatFinal.format(date);*/
+            return "";
+        }
     }
 
+//Refresh cada N tiempo
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+
+            if(RefreshType == 0) {
+      /* Metodo a Ejecutar */
+                pendingAdapter.clear();
+                new AsyncTaskExample().execute(urlpending);
+      /* Volvemos a llamar cada N */
+                handler.postDelayed(this, TimerInterval);
+            }
+            else{
+                atendedAdapter.clear();
+                new AsyncTaskAtendidas().execute(urlatended);
+                handler.postDelayed(this,TimerInterval);
+            }
+        }
+    };
+
 }
+
 
 

@@ -8,6 +8,7 @@ import java.util.ArrayList;
  */
 public class OBJ_ORDEN implements Serializable {
     private static final long serialVersionUID = 1L;
+    public String TimeStamp;
     public String OrderId;
     public String TotalPayment;
     public String Tip;
@@ -18,6 +19,14 @@ public class OBJ_ORDEN implements Serializable {
     public String TableNumber;
     public Integer Priority;
     public ArrayList<OBJ_ITEM> Items;
+
+    public String getTimeStamp() {
+        return TimeStamp;
+    }
+
+    public void setTimeStamp(String timeStamp){
+        TimeStamp = timeStamp;
+    }
 
     public String getTip() {
         return Tip;
@@ -35,7 +44,7 @@ public class OBJ_ORDEN implements Serializable {
         Userfullname = userfullname;
     }
 
-    public OBJ_ORDEN(String orderid,String tablenumber,String totalpayment,ArrayList<OBJ_ITEM> items,Integer state,String clientname,String tip){
+    public OBJ_ORDEN(String orderid,String tablenumber,String totalpayment,ArrayList<OBJ_ITEM> items,Integer state,String clientname,String tip,String timeStamp){
     this.OrderId = orderid;
     this.TableNumber = tablenumber;
     this.TotalPayment = totalpayment;
@@ -43,6 +52,7 @@ public class OBJ_ORDEN implements Serializable {
     this.State = state;
     this.Tip = tip;
     this.Userfullname = clientname;
+        this.TimeStamp = timeStamp;
 }
 
 

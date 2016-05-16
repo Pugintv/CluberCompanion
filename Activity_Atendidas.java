@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.cjj.MaterialRefreshLayout;
-import com.cjj.MaterialRefreshListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -83,7 +82,7 @@ public class Activity_Atendidas extends ListActivity {
         new AsyncTaskExample().execute(urlpending);
 
 
-        listView = (ListView) findViewById(R.id.list2);
+        listView = getListView();//(ListView) findViewById(R.id.list2);
 
         String[] values = new String[] { "Android List View",
                 "Adapter implementation",
@@ -130,31 +129,20 @@ public class Activity_Atendidas extends ListActivity {
         listView.setOnTouchListener(touchListener);
         listView.setOnScrollListener(touchListener.makeScrollListener());
 
-        //
-        //PULL TO REFRESH
-        //
-        // Manejamos el pull to refresh de pendientes
 
-        refresh2 = (MaterialRefreshLayout) findViewById(R.id.refresh);
-        refresh2.setMaterialRefreshListener(new MaterialRefreshListener() {
-            @Override
-            public void onRefresh(MaterialRefreshLayout materialRefreshLayout) {
-                //Codigo que se hara en el refresh
-                pendingAdapter.clear();
-                new AsyncTaskExample().execute(urlpending);
-                refresh2.finishRefresh();
-            }
-            @Override
-            public void onRefreshLoadMore(MaterialRefreshLayout materialRefreshLayout) {
-                //load more refreshing...
-            }
-        });
 
 
         //
         //Termina pull to refresh
         //
 
+    }
+
+    public void createtable(ArrayAdapter<String> adapter){
+        nAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1,
+                android.R.id.text2,arrayList2);
+        setListAdapter(adapter);
     }
 
     public String valueSaved(){
@@ -168,6 +156,11 @@ public class Activity_Atendidas extends ListActivity {
         SharedPreferences mySharedPrefs = PreferenceManager
                 .getDefaultSharedPreferences(getApplication());
         mySharedPrefs.edit().putString("Waiterid", waiterid).commit();
+    }
+
+    public void refreshaction(String waiterid){
+        urlatended = "http://apisbx.cluberapp.com/api/Companion/QueryCompletedOrders?waitpersonId=" + waiterid;
+        new AsyncTaskAtendidas().execute(urlatended);
     }
 
 
@@ -220,7 +213,7 @@ public class Activity_Atendidas extends ListActivity {
 
                     //Creamos el objeto orden
 
-                    penOrderlist.add(new OBJ_ORDEN(OrderId, sOrdertablenumber, dOrdertotal, obj_items, this.getState(dOrderstate), sUserfullname, sOrdertip));
+                    penOrderlist.add(new OBJ_ORDEN(OrderId, sOrdertablenumber, dOrdertotal, obj_items, this.getState(dOrderstate), sUserfullname, sOrdertip,Ordertimestamp));
                     OBJ_ORDEN orden = new OBJ_ORDEN();
                     orden.setOrderId(OrderId);
                     orden.setTableNumber(sOrdertablenumber);
@@ -358,7 +351,7 @@ public class Activity_Atendidas extends ListActivity {
 
 
                     //Creamos el objeto orden
-                    penOrderlist.add(new OBJ_ORDEN(OrderId, sOrdertablenumber, dOrdertotal, obj_items, this.getState(dOrderstate), sUserfullname, sOrdertip));
+                    penOrderlist.add(new OBJ_ORDEN(OrderId, sOrdertablenumber, dOrdertotal, obj_items, this.getState(dOrderstate), sUserfullname, sOrdertip,Ordertimestamp));
                     OBJ_ORDEN orden = new OBJ_ORDEN();
                     orden.setOrderId(OrderId);
                     orden.setTableNumber(sOrdertablenumber);
@@ -377,8 +370,8 @@ public class Activity_Atendidas extends ListActivity {
 
         @Override
         protected void onPostExecute(String[] stringFromDoInBackground) {
-            mAdapter.notifyDataSetChanged();
-            pendingAdapter.notifyDataSetChanged();
+            //mAdapter.notifyDataSetChanged();
+            //pendingAdapter.notifyDataSetChanged();
         }
 
         //

@@ -21,7 +21,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by victorrosas on 3/16/16.
@@ -210,7 +213,10 @@ public class Activity_Pendientes extends ListActivity {
                     String OrderId = obj.getString("OrderId");
                     String dOrdertotal = obj.getString("Total");
                     String sOrdertablenumber = obj.getString("PlaceTableNumber");
-                    String Ordertimestamp = obj.getString("TimeStamp");
+                    String Ordertimestamp = formatdaystamp(obj.getString("TimeStamp"));
+
+                    System.out.println("TimeSTAMP: " + obj.getString("Timestamp"));
+
                     String sOrdertip = obj.getString("Tip");
                     String dOrderstatus = obj.getString("Status");
                     String sUserfullname = obj.getString("UserFullName");
@@ -231,7 +237,7 @@ public class Activity_Pendientes extends ListActivity {
 
                     //Creamos el objeto orden
 
-                    penOrderlist.add(new OBJ_ORDEN(OrderId, sOrdertablenumber, dOrdertotal, obj_items, this.getState(dOrderstate), sUserfullname, sOrdertip));
+                    penOrderlist.add(new OBJ_ORDEN(OrderId, sOrdertablenumber, dOrdertotal, obj_items, this.getState(dOrderstate), sUserfullname, sOrdertip,Ordertimestamp));
                     OBJ_ORDEN orden = new OBJ_ORDEN();
                     orden.setOrderId(OrderId);
                     orden.setTableNumber(sOrdertablenumber);
@@ -244,8 +250,17 @@ public class Activity_Pendientes extends ListActivity {
 
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
             return objetos;
+        }
+
+        public String formatdaystamp(String timestamp) throws ParseException {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-ddTHH:mm:ss:zzz");
+            Date date = dateFormat.parse(timestamp);
+            SimpleDateFormat dateFormatFinal = new SimpleDateFormat("HH:mm-dd/MM/yyyy");
+            return dateFormatFinal.format(date);
         }
 
 

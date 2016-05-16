@@ -42,6 +42,8 @@ public class perfil extends AppCompatActivity {
     TextView txt_mesas;
     TextView txt_tips;
     private static Button btn_amesas;
+    Button btn_logout;
+
     JSONObject jsonObject;
     JSONObject jsonwaiter;
 
@@ -130,6 +132,21 @@ public class perfil extends AppCompatActivity {
                     });
 
         }*/
+
+
+        btn_logout = (Button)findViewById(R.id.btnLogout);
+        btn_logout.setOnClickListener(
+                new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences sharedpreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+                sharedpreferences.edit().clear().commit();
+                sharedpreferences.edit().putString("ParseInit","YES");
+                Intent intent = new Intent(getApplicationContext(),Login.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
 

@@ -1,6 +1,8 @@
 package com.lendasoft.clubercompanion;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -21,6 +23,10 @@ import java.io.IOException;
 
 
 public class Login extends ActionBarActivity {
+    String isParseInit;
+    String isLogged;
+    String WaiterId;
+    String Login;
     String log_username;
     String log_password;
     String log_name;
@@ -34,7 +40,7 @@ public class Login extends ActionBarActivity {
     JSONObject jsonwaiter = new JSONObject();
     JSONObject waiter = new JSONObject();
     String [] login_object = new String[3];
-
+    SharedPreferences sharedPreferences;
 
 
     @Override
@@ -42,8 +48,29 @@ public class Login extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         LoginButtonClicked();
+        sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        isParseInit = sharedPreferences.getString("ParseInit","NO");
+        if(isParseInit.equalsIgnoreCase("NO")){
+            parseInit();
+        }
+
+        checkIsLogged();
+    }
+
+    public void parseInit(){
         Parse.initialize(this, "wptHWdzQOWT8LYaOmTVCZOD3PhU7WjlpQW2keSyi", "4jsVgExUQIiQoVOs1tWIcT32VO6uMGVHHGoR0QOr");
         ParseInstallation.getCurrentInstallation().saveInBackground();
+    }
+
+    public void checkIsLogged(){
+        sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        isLogged = sharedPreferences.getString("Login","NO");
+        if(isLogged.equalsIgnoreCase("YES")){
+            Intent intent = new Intent("com.lendasoft.clubercompanion.Mesas");
+            intent.putExtra("Waiterid",sharedPreferences.getString("WaiterId",null));
+            startActivity(intent);
+        }
+
     }
 
     public void  LoginButtonClicked(){
@@ -131,6 +158,13 @@ public class Login extends ActionBarActivity {
             log_name = login_object[2];
 
             if(login_object[0] == "true") {
+
+
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("Login","YES");
+                editor.putString("WaiterId",login_object[1]);
+                editor.commit();
+
                 Toast.makeText(Login.this,"Welcome " + login_object[2],Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent("com.lendasoft.clubercompanion.Mesas");
                 intent.putExtra("Waiterid",login_object[1]);
