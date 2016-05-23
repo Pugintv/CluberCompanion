@@ -41,6 +41,4 @@ public class HTTP_Request {
         return result;
     }
 
-
-
 }
