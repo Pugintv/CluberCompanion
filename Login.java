@@ -13,6 +13,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.microsoft.windowsazure.notifications.NotificationsManager;
 import com.parse.Parse;
 import com.parse.ParseInstallation;
 
@@ -23,6 +27,17 @@ import java.io.IOException;
 
 
 public class Login extends ActionBarActivity {
+
+///PUSH NOTIFICATIONS
+
+    public static Login mainActivity;
+    public static Boolean isVisible = false;
+    private GoogleCloudMessaging gcm;
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+
+///
+
+
     String isParseInit;
     String isLogged;
     String WaiterId;
@@ -47,6 +62,11 @@ public class Login extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        mainActivity = this;
+        NotificationsManager.handleNotifications(this, NotificationSettings.SenderId, MyHandler.class);
+        registerWithNotificationHubs();
+
         LoginButtonClicked();
         sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         isParseInit = sharedPreferences.getString("ParseInit","NO");
@@ -55,6 +75,41 @@ public class Login extends ActionBarActivity {
         }
 
         checkIsLogged();
+    }
+
+    public void registerWithNotificationHubs()
+    {
+        //Log.i(TAG, " Registering with Notification Hubs");
+
+        if (checkPlayServices()) {
+            // Start IntentService to register this application with GCM.
+            Intent intent = new Intent(this, RegistrationIntentService.class);
+            startService(intent);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        isVisible = true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isVisible = false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isVisible = true;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        isVisible = false;
     }
 
     public void parseInit(){
@@ -175,5 +230,26 @@ public class Login extends ActionBarActivity {
         }
     }
 
+    /**
+     * Check the device to make sure it has the Google Play Services APK. If
+     * it doesn't, display a dialog that allows users to download the APK from
+     * the Google Play Store or enable it in the device's system settings.
+     */
+    private boolean checkPlayServices() {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
+                        .show();
+            } else {
+                //Log.i(TAG, "This device is not supported by Google Play Services.");
+                //ToastNotify("This device is not supported by Google Play Services.");
+                finish();
+            }
+            return false;
+        }
+        return true;
+    }
 
 }
