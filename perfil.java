@@ -140,6 +140,9 @@ public class perfil extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 SharedPreferences sharedpreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+                String DeviceId = sharedpreferences.getString("DeviceId","");
+                String url = "http://apisbx.cluberapp.com/api/Notification/DeleteDeviceRegistration/" + DeviceId;
+                new AsyncTaskPostDelete();
                 sharedpreferences.edit().clear().commit();
                 sharedpreferences.edit().putString("ParseInit","YES");
                 Intent intent = new Intent(getApplicationContext(),Login.class);
@@ -313,6 +316,30 @@ public class perfil extends AppCompatActivity {
 
         }
 
+    }
+
+    public class AsyncTaskPostDelete extends AsyncTask<String,String,String[]> {
+        @Override
+        protected void onPreExecute() {
+            //Mostrar progressbar de ser necesario
+        }
+
+        protected String[] doInBackground(String... url) {
+            try {
+
+                JsonParser.PostRequest(url[0]);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String[] stringFromDoInBackground) {
+
+        }
     }
 
 

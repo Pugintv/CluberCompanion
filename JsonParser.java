@@ -56,7 +56,7 @@ public class JsonParser {
         try  {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             String jsonText = readAll(rd);
-            //System.out.println(jsonText);
+            System.out.println(jsonText);
             JSONObject jsonObject = new JSONObject(jsonText);
             return jsonObject;
         } finally {
@@ -112,7 +112,43 @@ public class JsonParser {
         try  {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             String jsonText = readAll(rd);
-            //System.out.println(jsonText);
+            System.out.println(jsonText);
+            JSONObject jsonObject = new JSONObject(jsonText);
+            return jsonObject;
+        } finally {
+            is.close();
+            int status = urlConnection.getResponseCode();
+            System.out.println("Status:" + status);
+            urlConnection.disconnect();
+        }
+    }
+
+    public static JSONObject PostRegisterWaitPersonDevice(String url,String Handle,String Tags) throws IOException, JSONException {
+        HttpURLConnection urlConnection = (HttpURLConnection) new URL(url).openConnection();
+        urlConnection.addRequestProperty("X-CLUBERAPP-ApiKey", "key_Y2x1YmVyYXBwOkNsdWIzcg==");
+        urlConnection.setRequestMethod("POST");
+
+        //Agregamos Parametros
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("Platform", "GCM"));
+        params.add(new BasicNameValuePair("Handle", Handle));
+        //params.add(new BasicNameValuePair("Tags",Tags));
+
+        OutputStream os = urlConnection.getOutputStream();
+        BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(os, "UTF-8"));
+        writer.write(getQuery(params));
+        writer.flush();
+        writer.close();
+        os.close();
+
+
+        InputStream is = new BufferedInputStream(urlConnection.getInputStream());
+
+        try  {
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            String jsonText = readAll(rd);
+            System.out.println(jsonText);
             JSONObject jsonObject = new JSONObject(jsonText);
             return jsonObject;
         } finally {

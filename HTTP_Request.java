@@ -17,7 +17,14 @@ import java.net.URL;
 public class HTTP_Request {
     String weburl =  "http://apisbx.cluberapp.com/api/";
 
-
+    /**
+     * Login
+     * @param s_mobile # de telefono con el que se registro al mesero
+     * @param s_pin   # pin que se asigno al mesero
+     * @return
+     * @throws IOException
+     * @throws JSONException
+     */
     public  JSONObject get_login(String s_mobile,String s_pin) throws IOException, JSONException {
         String url = weburl + "User/VerifyCredentials?mobilePhoneNumber="  +  s_mobile +"&pin=" + s_pin;
         HttpURLConnection urlConnection = (HttpURLConnection) new URL(url).openConnection();
@@ -26,6 +33,8 @@ public class HTTP_Request {
         //readJsonStream(is);
         return null;
     }
+
+
 
     public JSONObject IStoJSON(InputStream is) throws IOException, JSONException {
         BufferedReader BR = new BufferedReader(new InputStreamReader(is));
@@ -40,5 +49,7 @@ public class HTTP_Request {
         JSONObject result = new JSONObject(responseStrBuilder.toString());
         return result;
     }
+
+
 
 }

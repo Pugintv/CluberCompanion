@@ -37,7 +37,7 @@ public class Login extends ActionBarActivity {
 
 ///
 
-
+    String urlbase = "http://apisbx.cluberapp.com/api/";
     String isParseInit;
     String isLogged;
     String WaiterId;
@@ -55,7 +55,7 @@ public class Login extends ActionBarActivity {
     JSONObject jsonwaiter = new JSONObject();
     JSONObject waiter = new JSONObject();
     String [] login_object = new String[3];
-    SharedPreferences sharedPreferences;
+    SharedPreferences sharedPreferences;// = PreferenceManager.getDefaultSharedPreferences(this);;
 
 
     @Override
@@ -121,6 +121,10 @@ public class Login extends ActionBarActivity {
         sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         isLogged = sharedPreferences.getString("Login","NO");
         if(isLogged.equalsIgnoreCase("YES")){
+
+            String url = urlbase + "Notification/RegisterWaitpersonDevice?waitpersonId=" + sharedPreferences.getString("WaiterId",null);
+            new AT_RegisterWaitpersonDevice().execute(url);
+
             Intent intent = new Intent("com.lendasoft.clubercompanion.Mesas");
             intent.putExtra("Waiterid",sharedPreferences.getString("WaiterId",null));
             startActivity(intent);
@@ -220,6 +224,9 @@ public class Login extends ActionBarActivity {
                 editor.putString("WaiterId",login_object[1]);
                 editor.commit();
 
+                String url = urlbase + "Notification/RegisterWaitpersonDevice?waitpersonId=" + login_object[1];
+                new AT_RegisterWaitpersonDevice().execute(url);
+
                 Toast.makeText(Login.this,"Welcome " + login_object[2],Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent("com.lendasoft.clubercompanion.Mesas");
                 intent.putExtra("Waiterid",login_object[1]);
@@ -229,6 +236,38 @@ public class Login extends ActionBarActivity {
             }
         }
     }
+
+    //**Registrar el id de la persona
+
+    public class AT_RegisterWaitpersonDevice extends AsyncTask<String, String, String> {
+
+        @Override
+        protected void onPreExecute() {
+            //Mostrar progressbar de ser necesario
+        }
+
+        @Override
+        protected String doInBackground(String... url) {
+
+            sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+            String regID = sharedPreferences.getString("prefs_regId","");
+
+            /*try {
+               //JSONObject jsonObject = JsonParser.PostRegisterWaitPersonDevice(url[0],sharedPreferences.getString("prefs_regId",null),"");
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }*/
+            return "";
+        }
+
+        @Override
+        protected void onPostExecute(String stringFromDoInBackground) {
+
+        }
+    }
+
 
     /**
      * Check the device to make sure it has the Google Play Services APK. If
