@@ -140,13 +140,9 @@ public class perfil extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 SharedPreferences sharedpreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
-                String DeviceId = sharedpreferences.getString("DeviceId","");
-                String url = "http://apisbx.cluberapp.com/api/Notification/DeleteDeviceRegistration/" + DeviceId;
-                new AsyncTaskPostDelete();
-                sharedpreferences.edit().clear().commit();
-                sharedpreferences.edit().putString("ParseInit","YES");
-                Intent intent = new Intent(getApplicationContext(),Login.class);
-                startActivity(intent);
+                String DeviceId = sharedpreferences.getString("prefs_deviceId","");
+                String url = "http://apisbx.cluberapp.com/api/CompanionNotification/DeleteDeviceRegistration/" + DeviceId;
+                new AsyncTaskPostDelete().execute(url);
             }
         });
 
@@ -338,7 +334,11 @@ public class perfil extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String[] stringFromDoInBackground) {
-
+            SharedPreferences sharedpreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+            sharedpreferences.edit().clear().commit();
+            sharedpreferences.edit().putString("ParseInit","YES");
+            Intent intent = new Intent(getApplicationContext(),Login.class);
+            startActivity(intent);
         }
     }
 

@@ -1,10 +1,10 @@
 package com.lendasoft.clubercompanion;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -29,9 +29,15 @@ public class RegistrationIntentService extends IntentService {
         super(TAG);
     }
 
+    public String getToken() throws IOException {
+        InstanceID instanceID = InstanceID.getInstance(this);
+        String token = instanceID.getToken(NotificationSettings.SenderId,GoogleCloudMessaging.INSTANCE_ID_SCOPE);
+        return token;
+    }
+
     @Override
     protected void onHandleIntent(Intent intent) {
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         String resultString = null;
         String regID = null;
 

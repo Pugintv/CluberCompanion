@@ -55,7 +55,7 @@ public class Login extends ActionBarActivity {
     JSONObject jsonwaiter = new JSONObject();
     JSONObject waiter = new JSONObject();
     String [] login_object = new String[3];
-    SharedPreferences sharedPreferences;// = PreferenceManager.getDefaultSharedPreferences(this);;
+    SharedPreferences sharedPreferences;
 
 
     @Override
@@ -224,13 +224,9 @@ public class Login extends ActionBarActivity {
                 editor.putString("WaiterId",login_object[1]);
                 editor.commit();
 
-                String url = urlbase + "Notification/RegisterWaitpersonDevice?waitpersonId=" + login_object[1];
+                String url = urlbase + "CompanionNotification/RegisterWaitpersonDevice?waitpersonId=" + login_object[1];
                 new AT_RegisterWaitpersonDevice().execute(url);
 
-                Toast.makeText(Login.this,"Welcome " + login_object[2],Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent("com.lendasoft.clubercompanion.Mesas");
-                intent.putExtra("Waiterid",login_object[1]);
-                startActivity(intent);
             } else{
                 Toast.makeText(Login.this, "User and Password incorrect", Toast.LENGTH_SHORT).show();
             }
@@ -248,23 +244,33 @@ public class Login extends ActionBarActivity {
 
         @Override
         protected String doInBackground(String... url) {
-
+            registerWithNotificationHubs();
             sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
             String regID = sharedPreferences.getString("prefs_regId","");
 
-            /*try {
-               //JSONObject jsonObject = JsonParser.PostRegisterWaitPersonDevice(url[0],sharedPreferences.getString("prefs_regId",null),"");
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }*/
+            if (regID.length() > 1){
+                try {
+                    JSONObject jsonObject = JsonParser.PostRegisterWaitPersonDevice(url[0], sharedPreferences.getString("prefs_regId", null), "");
+                    String deviceId = jsonObject.getString("");
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("prefs_deviceId",deviceId);
+                    editor.commit();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
             return "";
         }
 
         @Override
         protected void onPostExecute(String stringFromDoInBackground) {
-
+            Toast.makeText(Login.this,"Welcome " + login_object[2],Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent("com.lendasoft.clubercompanion.Mesas");
+            intent.putExtra("Waiterid",login_object[1]);
+            startActivity(intent);
         }
     }
 

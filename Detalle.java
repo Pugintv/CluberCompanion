@@ -55,18 +55,18 @@ public class Detalle extends ActionBarActivity implements Serializable {
         arrayList.add("Total: " + orden.TotalPayment);
         arrayList.add("Mesa: " + orden.TableNumber);*/
         lbldate.setText(orden.TimeStamp);
-        lbltablenum.setText("Mesa:" + orden.TableNumber);
-        lblinfo.setText("Orden:" + orden.OrderId);
+        lbltablenum.setText("Mesa:  " + orden.TableNumber);
+        lblinfo.setText("Orden: " + orden.OrderId);
         lbltotal.setText("Total: $" + orden.TotalPayment);
 
         itemList = formatOrder(orden.Items);
         for (Integer i =0;i<itemList.size();i++) {
         OBJ_ITEM item = itemList.get(i);
-            arrayList.add(item.sPlaceitemname + " X " + item.dItemQuantity.toString() + "           = $" + item.sItemprice);
+            arrayList.add(item.sPlaceitemname + "($ "+ item.sItemprice + " )" + "    X     " + item.dItemQuantity.toString() + "           = $" + (item.dItemQuantity * Double.parseDouble(item.sItemprice)));
         }
         arrayList.add("");
-        arrayList.add("Cliente:" + orden.Userfullname);
-        arrayList.add("Propina:" + orden.Tip);
+        arrayList.add("Cliente: " + orden.Userfullname);
+        arrayList.add("Propina: $" + orden.Tip);
     }
 
     public void ToordersButtonClicked(){
