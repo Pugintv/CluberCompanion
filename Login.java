@@ -39,6 +39,7 @@ public class Login extends ActionBarActivity {
 
     String urlbase = "http://apisbx.cluberapp.com/api/";
     String isParseInit;
+    String istokenactive;
     String isLogged;
     String WaiterId;
     String Login;
@@ -65,14 +66,19 @@ public class Login extends ActionBarActivity {
 
         mainActivity = this;
         NotificationsManager.handleNotifications(this, NotificationSettings.SenderId, MyHandler.class);
-        registerWithNotificationHubs();
+        //registerWithNotificationHubs();
 
         LoginButtonClicked();
         sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         isParseInit = sharedPreferences.getString("ParseInit","NO");
+        istokenactive = sharedPreferences.getString("prefs_regId","");
         if(isParseInit.equalsIgnoreCase("NO")){
             parseInit();
         }
+        if(istokenactive.equalsIgnoreCase("")){
+            registerWithNotificationHubs();
+        }
+
 
         checkIsLogged();
     }
@@ -122,7 +128,7 @@ public class Login extends ActionBarActivity {
         isLogged = sharedPreferences.getString("Login","NO");
         if(isLogged.equalsIgnoreCase("YES")){
 
-            String url = urlbase + "Notification/RegisterWaitpersonDevice?waitpersonId=" + sharedPreferences.getString("WaiterId",null);
+            String url = urlbase + "CompanionNotification/RegisterWaitpersonDevice?waitpersonId=" + sharedPreferences.getString("WaiterId",null);
             new AT_RegisterWaitpersonDevice().execute(url);
 
             Intent intent = new Intent("com.lendasoft.clubercompanion.Mesas");
@@ -218,12 +224,10 @@ public class Login extends ActionBarActivity {
 
             if(login_object[0] == "true") {
 
-
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString("Login","YES");
                 editor.putString("WaiterId",login_object[1]);
                 editor.commit();
-
                 String url = urlbase + "CompanionNotification/RegisterWaitpersonDevice?waitpersonId=" + login_object[1];
                 new AT_RegisterWaitpersonDevice().execute(url);
 
@@ -244,13 +248,14 @@ public class Login extends ActionBarActivity {
 
         @Override
         protected String doInBackground(String... url) {
-            registerWithNotificationHubs();
             sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+            RegistrationIntentService reg = new RegistrationIntentService();
             String regID = sharedPreferences.getString("prefs_regId","");
+
 
             if (regID.length() > 1){
                 try {
-                    JSONObject jsonObject = JsonParser.PostRegisterWaitPersonDevice(url[0], sharedPreferences.getString("prefs_regId", null), "");
+                    JSONObject jsonObject = JsonParser.PostRegisterWaitPersonDevice(url[0], regID, "");
                     String deviceId = jsonObject.getString("");
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("prefs_deviceId",deviceId);
@@ -262,6 +267,7 @@ public class Login extends ActionBarActivity {
                     e.printStackTrace();
                 }
             }
+            else {System.out.println("No hay token aun");}
             return "";
         }
 

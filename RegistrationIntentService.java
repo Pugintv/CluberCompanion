@@ -20,6 +20,7 @@ import java.io.IOException;
 public class RegistrationIntentService extends IntentService {
     String url;
     String DeviceID;
+    String token;
     SharedPreferences sharedPreferences; //= PreferenceManager.getDefaultSharedPreferences(this);;
     private static final String TAG = "RegIntentService";
 
@@ -32,8 +33,11 @@ public class RegistrationIntentService extends IntentService {
     public String getToken() throws IOException {
         InstanceID instanceID = InstanceID.getInstance(this);
         String token = instanceID.getToken(NotificationSettings.SenderId,GoogleCloudMessaging.INSTANCE_ID_SCOPE);
+        DeviceID = token;
         return token;
     }
+
+    public String getDeviceID(){return DeviceID;}
 
     @Override
     protected void onHandleIntent(Intent intent) {
@@ -45,29 +49,32 @@ public class RegistrationIntentService extends IntentService {
             InstanceID instanceID = InstanceID.getInstance(this);
             String token = instanceID.getToken(NotificationSettings.SenderId,
                     GoogleCloudMessaging.INSTANCE_ID_SCOPE);
-            Log.i(TAG, "Got GCM Registration Token: " + token);
 
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("prefs_regId",token);
             editor.commit();
 
+            Log.i(TAG, "Got GCM Registration Token: " + token);
+            DeviceID = token;
+
+
             // Storing the registration id that indicates whether the generated token has been
             // sent to your server. If it is not stored, send the token to your server,
             // otherwise your server should have already received the token.
             if ((regID=sharedPreferences.getString("prefs_regId", null)) == null) {
-                NotificationHub hub = new NotificationHub(NotificationSettings.HubName,
+                /*NotificationHub hub = new NotificationHub(NotificationSettings.HubName,
                         NotificationSettings.HubListenConnectionString, this);
                 Log.i(TAG, "Attempting to register with NH using token : " + token);
 
-                regID = hub.register(token).getRegistrationId();
-
+                regID = hub.register(token).getRegistrationId();*/
+                DeviceID = token;
                 editor.putString("prefs_regId",token);
                 editor.commit();
 
 
-                resultString = "Registered Successfully - RegId : " + regID;
+               /* resultString = "Registered Successfully - RegId : " + regID;
                 Log.i(TAG, resultString);
-                sharedPreferences.edit().putString("registrationID", regID ).apply();
+                sharedPreferences.edit().putString("registrationID", regID ).apply();*/
 
             } else {
                 resultString = "Previously Registered Successfully - RegId : " + regID;

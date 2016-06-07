@@ -220,7 +220,7 @@ public class Mesas extends ListActivity {
                             @Override
                             public void onDismiss(ListView listView, int[] reverseSortedPositions) {
                                 for (int position : reverseSortedPositions) {
-                                    String Orderid = completedOrders[position].OrderId;
+                                    String Orderid = /*completedOrders*/ordenes[position].OrderId;
                                     String status = "8";
                                     String url = "http://apisbx.cluberapp.com/api/Companion/ChangeOrderStatus?orderId=" + Orderid + "&status=" + status;
                                     new AsyncTaskPost().execute(url);
@@ -542,7 +542,7 @@ public class Mesas extends ListActivity {
                 }
 
             } catch (IOException | JSONException e) {
-                e.printStackTrace();
+               // e.printStackTrace();
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -596,7 +596,7 @@ public class Mesas extends ListActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (JSONException e) {
-                e.printStackTrace();
+               // e.printStackTrace();
             }
             return null;
         }
@@ -671,7 +671,7 @@ public class Mesas extends ListActivity {
                 }
 
             } catch (IOException | JSONException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
             } catch (ParseException e) {
                 e.printStackTrace();
             }

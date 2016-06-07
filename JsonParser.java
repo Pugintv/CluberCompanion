@@ -56,7 +56,7 @@ public class JsonParser {
         try  {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             String jsonText = readAll(rd);
-            System.out.println(jsonText);
+            //System.out.println(jsonText);
             JSONObject jsonObject = new JSONObject(jsonText);
             return jsonObject;
         } finally {
@@ -127,10 +127,13 @@ public class JsonParser {
         HttpURLConnection urlConnection = (HttpURLConnection) new URL(url).openConnection();
         urlConnection.addRequestProperty("X-CLUBERAPP-ApiKey", "key_Y2x1YmVyYXBwOkNsdWIzcg==");
         urlConnection.setRequestMethod("POST");
+        //urlConnection.setRequestProperty("Content-Type", "application/json");
+
 
         //Agregamos Parametros
         List<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair("Platform", "GCM"));
+        String platform = "gcm";
+        params.add(new BasicNameValuePair("Platform", platform));
         params.add(new BasicNameValuePair("Handle", Handle));
         //params.add(new BasicNameValuePair("Tags",Tags));
 
@@ -142,9 +145,11 @@ public class JsonParser {
         writer.close();
         os.close();
 
+        int status = urlConnection.getResponseCode();
+        System.out.println("Status Handle:" + status);
 
-        InputStream is = new BufferedInputStream(urlConnection.getInputStream());
-
+        InputStream is = urlConnection.getInputStream(); //new BufferedInputStream(urlConnection.getInputStream());
+        System.out.println(is);
         try  {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             String jsonText = readAll(rd);
@@ -153,8 +158,8 @@ public class JsonParser {
             return jsonObject;
         } finally {
             is.close();
-            int status = urlConnection.getResponseCode();
-            System.out.println("Status:" + status);
+            //int status = urlConnection.getResponseCode();
+            //System.out.println("Status:" + status);
             urlConnection.disconnect();
         }
     }
