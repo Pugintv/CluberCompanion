@@ -19,7 +19,6 @@ import android.widget.TabHost;
 
 import com.cjj.MaterialRefreshLayout;
 import com.cjj.MaterialRefreshListener;
-import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -285,7 +284,6 @@ public class Mesas extends ListActivity {
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
     //Refresh se ejecutara despues de 5 segundos
         handler.postDelayed(runnable, 5000);

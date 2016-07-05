@@ -17,8 +17,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.microsoft.windowsazure.notifications.NotificationsManager;
-import com.parse.Parse;
-import com.parse.ParseInstallation;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -73,9 +71,9 @@ public class Login extends ActionBarActivity {
         isParseInit = sharedPreferences.getString("ParseInit","NO");
         istokenactive = sharedPreferences.getString("prefs_regId","");
         if(isParseInit.equalsIgnoreCase("NO")){
-            parseInit();
+//            parseInit();
         }
-        if(istokenactive.equalsIgnoreCase("")){
+        if(istokenactive == ""){
             registerWithNotificationHubs();
         }
 
@@ -119,10 +117,9 @@ public class Login extends ActionBarActivity {
     }
 
     public void parseInit(){
-        Parse.initialize(this, "wptHWdzQOWT8LYaOmTVCZOD3PhU7WjlpQW2keSyi", "4jsVgExUQIiQoVOs1tWIcT32VO6uMGVHHGoR0QOr");
-        ParseInstallation.getCurrentInstallation().saveInBackground();
+        //Parse.initialize(this, "wptHWdzQOWT8LYaOmTVCZOD3PhU7WjlpQW2keSyi", "4jsVgExUQIiQoVOs1tWIcT32VO6uMGVHHGoR0QOr");
+       // ParseInstallation.getCurrentInstallation().saveInBackground();
     }
-
     public void checkIsLogged(){
         sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         isLogged = sharedPreferences.getString("Login","NO");
@@ -255,8 +252,8 @@ public class Login extends ActionBarActivity {
 
             if (regID.length() > 1){
                 try {
-                    JSONObject jsonObject = JsonParser.PostRegisterWaitPersonDevice(url[0], regID, "");
-                    String deviceId = jsonObject.getString("");
+                    String regIdString = JsonParser.PostRegisterWaitPersonDevice(url[0], regID, "");
+                    String deviceId = regIdString.replace("\"","");
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("prefs_deviceId",deviceId);
                     editor.commit();

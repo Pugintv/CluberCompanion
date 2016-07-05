@@ -141,7 +141,7 @@ public class perfil extends AppCompatActivity {
             public void onClick(View v) {
                 SharedPreferences sharedpreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
                 String DeviceId = sharedpreferences.getString("prefs_deviceId","");
-                String url = "http://apisbx.cluberapp.com/api/CompanionNotification/DeleteDeviceRegistration/" + DeviceId;
+                String url = "http://apisbx.cluberapp.com/api/CompanionNotification/DeleteDeviceRegistration?registrationId=" + DeviceId;
                 new AsyncTaskPostDelete().execute(url);
             }
         });
@@ -314,6 +314,9 @@ public class perfil extends AppCompatActivity {
 
     }
 
+    //
+    //LOGOUT,Borramos el device del registro
+    //
     public class AsyncTaskPostDelete extends AsyncTask<String,String,String[]> {
         @Override
         protected void onPreExecute() {
@@ -321,14 +324,15 @@ public class perfil extends AppCompatActivity {
         }
 
         protected String[] doInBackground(String... url) {
-            try {
 
-                JsonParser.PostRequest(url[0]);
+            try {
+                JSONObject jsonObject = JsonParser.PostdeleteDevice(url[0]);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
             return null;
         }
 
@@ -337,6 +341,7 @@ public class perfil extends AppCompatActivity {
             SharedPreferences sharedpreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
             sharedpreferences.edit().clear().commit();
             sharedpreferences.edit().putString("ParseInit","YES");
+            sharedpreferences.edit().commit();
             Intent intent = new Intent(getApplicationContext(),Login.class);
             startActivity(intent);
         }

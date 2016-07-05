@@ -123,7 +123,35 @@ public class JsonParser {
         }
     }
 
-    public static JSONObject PostRegisterWaitPersonDevice(String url,String Handle,String Tags) throws IOException, JSONException {
+    public static JSONObject PostdeleteDevice(String url) throws IOException,JSONException{
+        HttpURLConnection urlConnection = (HttpURLConnection) new URL(url).openConnection();
+        urlConnection.addRequestProperty("X-CLUBERAPP-ApiKey", "key_Y2x1YmVyYXBwOkNsdWIzcg==");
+        urlConnection.setRequestMethod("POST");
+        //urlConnection.setRequestProperty("Content-Type", "application/json");
+
+
+        int status = urlConnection.getResponseCode();
+        System.out.println("Status Deletedevice:" + status);
+
+        InputStream is = urlConnection.getInputStream(); //new BufferedInputStream(urlConnection.getInputStream());
+        System.out.println(is);
+        try  {
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            String jsonText = readAll(rd);
+            System.out.println(jsonText);
+            JSONObject jsonObject = new JSONObject(jsonText);
+            return jsonObject;
+        } finally {
+            is.close();
+            //int status = urlConnection.getResponseCode();
+            //System.out.println("Status:" + status);
+            urlConnection.disconnect();
+        }
+
+
+    }
+
+    public static String PostRegisterWaitPersonDevice(String url,String Handle,String Tags) throws IOException, JSONException {
         HttpURLConnection urlConnection = (HttpURLConnection) new URL(url).openConnection();
         urlConnection.addRequestProperty("X-CLUBERAPP-ApiKey", "key_Y2x1YmVyYXBwOkNsdWIzcg==");
         urlConnection.setRequestMethod("POST");
@@ -154,8 +182,8 @@ public class JsonParser {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             String jsonText = readAll(rd);
             System.out.println(jsonText);
-            JSONObject jsonObject = new JSONObject(jsonText);
-            return jsonObject;
+            //JSONObject jsonObject = new JSONObject(jsonText);
+                return jsonText;
         } finally {
             is.close();
             //int status = urlConnection.getResponseCode();
