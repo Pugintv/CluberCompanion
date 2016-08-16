@@ -1,4 +1,4 @@
-package com.lendasoft.clubercompanion;
+package com.lendasoft.clubercompanion.Notifications;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.NotificationCompat;
 
+import com.lendasoft.clubercompanion.Login;
+import com.lendasoft.clubercompanion.R;
 import com.microsoft.windowsazure.notifications.NotificationsHandler;
 
 public class MyHandler extends NotificationsHandler {

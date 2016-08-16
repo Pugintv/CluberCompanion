@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.lendasoft.clubercompanion;
+package com.lendasoft.clubercompanion.HelperClasses;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;

@@ -16,6 +16,11 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.lendasoft.clubercompanion.HelperClasses.HTTP_Request;
+import com.lendasoft.clubercompanion.HelperClasses.JsonParser;
+import com.lendasoft.clubercompanion.Notifications.NotificationSettings;
+import com.lendasoft.clubercompanion.Notifications.RegistrationIntentService;
+import com.lendasoft.clubercompanion.Notifications.MyHandler;
 import com.microsoft.windowsazure.notifications.NotificationsManager;
 
 import org.json.JSONException;
@@ -128,7 +133,7 @@ public class Login extends ActionBarActivity {
             String url = urlbase + "CompanionNotification/RegisterWaitpersonDevice?waitpersonId=" + sharedPreferences.getString("WaiterId",null);
             new AT_RegisterWaitpersonDevice().execute(url);
 
-            Intent intent = new Intent("com.lendasoft.clubercompanion.Mesas");
+            Intent intent = new Intent("com.lendasoft.clubercompanion.Ordenes.Mesas");
             intent.putExtra("Waiterid",sharedPreferences.getString("WaiterId",null));
             startActivity(intent);
         }
@@ -271,7 +276,7 @@ public class Login extends ActionBarActivity {
         @Override
         protected void onPostExecute(String stringFromDoInBackground) {
             Toast.makeText(Login.this,"Welcome " + login_object[2],Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent("com.lendasoft.clubercompanion.Mesas");
+            Intent intent = new Intent("com.lendasoft.clubercompanion.Ordenes.Mesas");
             intent.putExtra("Waiterid",login_object[1]);
             startActivity(intent);
         }

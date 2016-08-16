@@ -1,4 +1,4 @@
-package com.lendasoft.clubercompanion;
+package com.lendasoft.clubercompanion.Ordenes;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.lendasoft.clubercompanion.R;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -75,7 +77,7 @@ public class Detalle extends ActionBarActivity implements Serializable {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent("com.lendasoft.clubercompanion.Mesas");
+                        Intent intent = new Intent("com.lendasoft.clubercompanion.Ordenes.Mesas");
                         intent.putExtra("Waiterid",waiterid);
                         startActivity(intent);
                     }

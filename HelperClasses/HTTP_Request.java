@@ -1,4 +1,4 @@
-package com.lendasoft.clubercompanion;
+package com.lendasoft.clubercompanion.HelperClasses;
 
 import org.json.JSONException;
 import org.json.JSONObject;

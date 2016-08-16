@@ -1,4 +1,4 @@
-package com.lendasoft.clubercompanion;
+package com.lendasoft.clubercompanion.Ordenes;
 
 import java.io.Serializable;
 

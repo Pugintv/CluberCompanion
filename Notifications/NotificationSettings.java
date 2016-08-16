@@ -1,4 +1,4 @@
-package com.lendasoft.clubercompanion;
+package com.lendasoft.clubercompanion.Notifications;
 
 /**
  * Created by victorrosas on 5/24/16.

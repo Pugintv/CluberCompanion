@@ -1,4 +1,4 @@
-package com.lendasoft.clubercompanion;
+package com.lendasoft.clubercompanion.Perfil;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +12,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -20,6 +19,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lendasoft.clubercompanion.HelperClasses.CircleTransform;
+import com.lendasoft.clubercompanion.HelperClasses.JsonParser;
+import com.lendasoft.clubercompanion.HelperClasses.UserPicture;
+import com.lendasoft.clubercompanion.Login;
+import com.lendasoft.clubercompanion.R;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -124,7 +127,7 @@ public class perfil extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                            Intent intent = new Intent("com.lendasoft.clubercompanion.Mesas");
+                            Intent intent = new Intent("com.lendasoft.clubercompanion.Ordenes.Mesas");
                             intent.putExtra("Waiterid",waiterid);
                             startActivity(intent);
                     }
@@ -147,7 +150,7 @@ public class perfil extends AppCompatActivity {
                     String url = "http://api.cluberservice.com/api/Waitperson/Update";
                     new AsyncTaskPostImage().execute(url);
                 } catch (IOException e) {
-                    Log.e(perfil.class.getSimpleName(), "Failed to load image", e);
+                    //Log.e(perfil.class.getSimpleName(), "Failed to load image", e);
                 }
                 // original code
 //                String selectedImagePath = getPath(selectedImageUri);
@@ -156,7 +159,7 @@ public class perfil extends AppCompatActivity {
         } else {
             // report failure
             Toast.makeText(getApplicationContext(), R.string.msg_failed_to_get_intent_data, Toast.LENGTH_LONG).show();
-            Log.d(perfil.class.getSimpleName(), "Failed to get intent data, result code is " + resultCode);
+           // Log.d(perfil.class.getSimpleName(), "Failed to get intent data, result code is " + resultCode);
         }
     }
 

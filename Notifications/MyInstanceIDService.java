@@ -1,7 +1,8 @@
-package com.lendasoft.clubercompanion;
+package com.lendasoft.clubercompanion.Notifications;
 
 import android.content.Intent;
 import android.util.Log;
+
 import com.google.android.gms.iid.InstanceIDListenerService;
 
 public class MyInstanceIDService extends InstanceIDListenerService {

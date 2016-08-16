@@ -1,4 +1,4 @@
-package com.lendasoft.clubercompanion;
+package com.lendasoft.clubercompanion.Notifications;
 
 import android.app.IntentService;
 import android.content.Context;
@@ -9,6 +9,8 @@ import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
+import com.lendasoft.clubercompanion.HelperClasses.JsonParser;
+import com.lendasoft.clubercompanion.Login;
 import com.microsoft.windowsazure.messaging.NotificationHub;
 
 import org.json.JSONException;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package lendasoft.com.testswipe;
+package com.lendasoft.clubercompanion.HelperClasses;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;

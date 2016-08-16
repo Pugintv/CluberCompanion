@@ -1,4 +1,4 @@
-package com.lendasoft.clubercompanion;
+package com.lendasoft.clubercompanion.Ordenes;
 
 import android.app.ListActivity;
 import android.content.Intent;
@@ -12,6 +12,9 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.cjj.MaterialRefreshLayout;
+import com.lendasoft.clubercompanion.HelperClasses.JsonParser;
+import com.lendasoft.clubercompanion.HelperClasses.SwipeDismissListViewTouchListener;
+import com.lendasoft.clubercompanion.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -1,4 +1,4 @@
-package com.lendasoft.clubercompanion;
+package com.lendasoft.clubercompanion.Ordenes;
 
 
 import android.app.ListActivity;
@@ -20,6 +20,9 @@ import android.widget.TabHost;
 import com.cjj.MaterialRefreshLayout;
 import com.cjj.MaterialRefreshListener;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.lendasoft.clubercompanion.HelperClasses.JsonParser;
+import com.lendasoft.clubercompanion.HelperClasses.SwipeDismissListViewTouchListener;
+import com.lendasoft.clubercompanion.R;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.json.JSONArray;
@@ -296,7 +299,7 @@ public class Mesas extends ListActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent("com.lendasoft.clubercompanion.perfil");
+                        Intent intent = new Intent("com.lendasoft.clubercompanion.Perfil.perfil");
                         intent.putExtra("Waiterid",waiterid);
                         startActivity(intent);
                     }
