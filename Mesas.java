@@ -305,7 +305,6 @@ public class Mesas extends ListActivity {
     }
 
 
-
     ///LISTVIEW2
     //
     //
