@@ -35,7 +35,7 @@ public class Login extends ActionBarActivity {
 
 ///
 
-    String urlbase = "http://apisbx.cluberapp.com/api/";
+    String urlbase = "http://api.cluberservice.com/api"; //"http://apisbx.cluberapp.com/api/";
     String isParseInit;
     String istokenactive;
     String isLogged;
@@ -158,7 +158,7 @@ public class Login extends ActionBarActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String url = "http://apisbx.cluberapp.com/api/Companion/SignIn?userName=" + username.getText() + "&password=" + password.getText().toString();
+                        String url = "http://api.cluberservice.com/api/Companion/SignIn?userName=" + username.getText() + "&password=" + password.getText().toString();
                         new AsyncTaskExample().execute(url);
 
                     }

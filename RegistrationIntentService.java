@@ -78,7 +78,7 @@ public class RegistrationIntentService extends IntentService {
 
             } else {
                 resultString = "Previously Registered Successfully - RegId : " + regID;
-                url = "http://apisbx.cluberapp.com/api/Notification/UpdateDeviceRegistration/"  +  regID;
+                url = "http://api.cluberservice.com/api/Notification/UpdateDeviceRegistration/"  +  regID;
             }
         } catch (Exception e) {
             Log.e(TAG, resultString="Failed to complete token refresh", e);

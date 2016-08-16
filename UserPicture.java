@@ -13,13 +13,15 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Base64;
 
+import com.squareup.picasso.Transformation;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InvalidObjectException;
 import java.nio.ByteBuffer;
 
-public class UserPicture {
+public class UserPicture implements Transformation{
     static int MAX_WIDTH = 600;
     static int MAX_HEIGHT = 800;
     Uri uri;
@@ -179,4 +181,13 @@ public class UserPicture {
     }
 
 
+    @Override
+    public Bitmap transform(Bitmap source) {
+        return null;
+    }
+
+    @Override
+    public String key() {
+        return null;
+    }
 }

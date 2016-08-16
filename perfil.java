@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Path;
 import android.graphics.Rect;
@@ -20,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.lendasoft.clubercompanion.HelperClasses.CircleTransform;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -28,9 +28,6 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 
 public class perfil extends AppCompatActivity {
@@ -66,7 +63,7 @@ public class perfil extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         String waiterId = getIntent().getStringExtra("Waiterid");
-        String url = "http://apisbx.cluberapp.com/api/Companion/GetWaitperson?waitpersonId=" + waiterId;
+        String url = "http://api.cluberservice.com/api/Companion/GetWaitperson?waitpersonId="/*"http://apisbx.cluberapp.com/api/Companion/GetWaitperson?waitpersonId="*/ + waiterId;
         new AsyncTaskExample().execute(url);
 
         //Obtenemos el valor de waiterId
@@ -106,34 +103,6 @@ public class perfil extends AppCompatActivity {
         });
 
 
-
-        //SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
-       // String prefImgURL = preferences.getString("Imageurl","");
-
-       /* if (urlimage != ""){
-            Picasso.with(this)
-                    .load(myuri)
-                    .placeholder(R.drawable.waiter_placeholder)
-                    .into(selectedImagePreview, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {//You will get your bitmap here
-
-                                    Bitmap innerBitmap = ((BitmapDrawable)selectedImagePreview.getDrawable()).getBitmap();
-                                }
-                            },100);
-                        }
-                        @Override
-                        public void onError() {
-
-                        }
-                    });
-
-        }*/
-
-
         btn_logout = (Button)findViewById(R.id.btnLogout);
         btn_logout.setOnClickListener(
                 new View.OnClickListener() {
@@ -141,7 +110,7 @@ public class perfil extends AppCompatActivity {
             public void onClick(View v) {
                 SharedPreferences sharedpreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
                 String DeviceId = sharedpreferences.getString("prefs_deviceId","");
-                String url = "http://apisbx.cluberapp.com/api/CompanionNotification/DeleteDeviceRegistration?registrationId=" + DeviceId;
+                String url = "http://api.cluberservice.com/api/CompanionNotification/DeleteDeviceRegistration?registrationId=" + DeviceId;
                 new AsyncTaskPostDelete().execute(url);
             }
         });
@@ -175,7 +144,7 @@ public class perfil extends AppCompatActivity {
                     //Convertimos a Base64
                     base64 = toBase64(bytes);
                     //Posteamos
-                    String url = "http://apisbx.cluberapp.com/api/Waitperson/Update";
+                    String url = "http://api.cluberservice.com/api/Waitperson/Update";
                     new AsyncTaskPostImage().execute(url);
                 } catch (IOException e) {
                     Log.e(perfil.class.getSimpleName(), "Failed to load image", e);
@@ -230,7 +199,7 @@ public class perfil extends AppCompatActivity {
     public String buildTablestring(String[] tables){
         StringBuilder strBuilder = new StringBuilder();
         for (int i = 0; i < tables.length; i++) {
-            strBuilder.append(tables[i] + "|");
+            strBuilder.append(tables[i] + " | ");
         }
         String newString = strBuilder.toString();
         return newString;
@@ -277,10 +246,8 @@ public class perfil extends AppCompatActivity {
             Picasso.with(getBaseContext())
                     .load(myuri)
                     .placeholder(R.drawable.waiter_placeholder)
-                    .fit()
+                    .transform(new CircleTransform())
                     .into(selectedImagePreview);
-
-
         }
     }
 
@@ -343,20 +310,9 @@ public class perfil extends AppCompatActivity {
             sharedpreferences.edit().putString("ParseInit","YES");
             sharedpreferences.edit().commit();
             Intent intent = new Intent(getApplicationContext(),Login.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         }
     }
 
-
-    public Bitmap setImage() throws IOException {
-        URL url = new URL("http://icon-icons.com/icons2/296/PNG/128/waiter-icon_31169.png");
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setDoInput(true);
-        InputStream input = connection.getInputStream();
-        Bitmap myBitmap = BitmapFactory.decodeStream(input);
-    //URL url = new URL("https://image.freepik.com/free-icon/waiter-with-tray_318-78534.png");//urlimage);
-    //Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-    Bitmap Roundedbmp = getRoundedShape(myBitmap);
-    return Roundedbmp;
-    }
 }

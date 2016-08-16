@@ -67,8 +67,8 @@ public class Activity_Atendidas extends ListActivity {
             saveValue();
         }
         else waiterid = valueSaved();
-        urlpending =  "http://apisbx.cluberapp.com/api/Companion/QueryPendingOrders?waitpersonId=" + waiterid;
-        urlatended = "http://apisbx.cluberapp.com/api/Companion/QueryCompletedOrders?waitpersonId=" + waiterid;
+        urlpending =  "http://api.cluberservice.com/api/Companion/QueryPendingOrders?waitpersonId=" + waiterid;
+        urlatended = "http://api.cluberservice.com/api/Companion/QueryCompletedOrders?waitpersonId=" + waiterid;
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_atendidas);
@@ -159,7 +159,7 @@ public class Activity_Atendidas extends ListActivity {
     }
 
     public void refreshaction(String waiterid){
-        urlatended = "http://apisbx.cluberapp.com/api/Companion/QueryCompletedOrders?waitpersonId=" + waiterid;
+        urlatended = "http://api.cluberservice.com/api/Companion/QueryCompletedOrders?waitpersonId=" + waiterid;
         new AsyncTaskAtendidas().execute(urlatended);
     }
 

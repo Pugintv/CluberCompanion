@@ -15,7 +15,7 @@ import java.net.URL;
  * Created by victorrosas on 2/11/16.
  */
 public class HTTP_Request {
-    String weburl =  "http://apisbx.cluberapp.com/api/";
+    String weburl =  "http://api.cluberservice.com/api/";
 
     /**
      * Login
