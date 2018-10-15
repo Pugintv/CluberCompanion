@@ -66,7 +66,7 @@ public class perfil extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         String waiterId = getIntent().getStringExtra("Waiterid");
-        String url = "http://api.cluberservice.com/api/Companion/GetWaitperson?waitpersonId="/*"http://apisbx.cluberapp.com/api/Companion/GetWaitperson?waitpersonId="*/ + waiterId;
+        String url = "http://api.url/" + waiterId;
         new AsyncTaskExample().execute(url);
 
         //Obtenemos el valor de waiterId
@@ -113,7 +113,7 @@ public class perfil extends AppCompatActivity {
             public void onClick(View v) {
                 SharedPreferences sharedpreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
                 String DeviceId = sharedpreferences.getString("prefs_deviceId","");
-                String url = "http://api.cluberservice.com/api/CompanionNotification/DeleteDeviceRegistration?registrationId=" + DeviceId;
+                String url = "http://api.url/" + DeviceId;
                 new AsyncTaskPostDelete().execute(url);
             }
         });
@@ -147,7 +147,7 @@ public class perfil extends AppCompatActivity {
                     //Convertimos a Base64
                     base64 = toBase64(bytes);
                     //Posteamos
-                    String url = "http://api.cluberservice.com/api/Waitperson/Update";
+                    String url = "http://api.url/";
                     new AsyncTaskPostImage().execute(url);
                 } catch (IOException e) {
                     //Log.e(perfil.class.getSimpleName(), "Failed to load image", e);
