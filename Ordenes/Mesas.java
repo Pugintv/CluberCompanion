@@ -96,13 +96,11 @@ public class Mesas extends ListActivity {
             saveValue();
         }
         else waiterid = valueSaved();
-        urlpending =  "http://api.cluberservice.com/api/Companion/QueryPendingOrders?waitpersonId=" /*"http://apisbx.cluberapp.com/api/Companion/QueryPendingOrders?waitpersonId="*/ + waiterid;
-        urlatended = "http://api.cluberservice.com/api/Companion/QueryCompletedOrders?waitpersonId=" /*"http://apisbx.cluberapp.com/api/Companion/QueryCompletedOrders?waitpersonId="*/ + waiterid;
+        urlpending =  "http://api.urlroute" + waiterid;
+        urlatended = "http://api.urlroute" + waiterid;
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mesas);
-
-
 
         arrayList = new ArrayList<String>();
 
@@ -187,7 +185,7 @@ public class Mesas extends ListActivity {
                                 for (int position : reverseSortedPositions) {
                                    String Orderid = ordenes[position].OrderId;
                                     String status = "0";
-                                    String url = "http://api.cluberservice.com/api/Companion/ChangeOrderStatus?orderId=" + Orderid + "&status=" + status;
+                                    String url = "http://api.urlroute" + Orderid + "&status=" + status;
                                    new AsyncTaskPost().execute(url);
 
                                     //Eliminamos de los arreglos y lo pasamos al otro tab
@@ -225,7 +223,7 @@ public class Mesas extends ListActivity {
                                 for (int position : reverseSortedPositions) {
                                     String Orderid = /*completedOrders*/ordenes[position].OrderId;
                                     String status = "8";
-                                    String url = "http://api.cluberservice.com/api/Companion/ChangeOrderStatus?orderId=" + Orderid + "&status=" + status;
+                                    String url = "http://api.urlroute" + Orderid + "&status=" + status;
                                     new AsyncTaskPost().execute(url);
 
                                     //Eliminamos de los arreglos y lo pasamos al otro tab
@@ -354,7 +352,7 @@ public class Mesas extends ListActivity {
                                 for (int position : reverseSortedPositions) {
                                     String Orderid = completedOrders[position].OrderId;
                                     String status = "8";
-                                    String url = "http://api.cluberservice.com/api/Companion/ChangeOrderStatus?orderId=" + Orderid + "&status=" + status;
+                                    String url = "http://api.urlroute" + Orderid + "&status=" + status;
                                     new AsyncTaskPost().execute(url);
                                 }
 
