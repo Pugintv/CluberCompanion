@@ -70,8 +70,8 @@ public class Activity_Atendidas extends ListActivity {
             saveValue();
         }
         else waiterid = valueSaved();
-        urlpending =  "http://api.cluberservice.com/api/Companion/QueryPendingOrders?waitpersonId=" + waiterid;
-        urlatended = "http://api.cluberservice.com/api/Companion/QueryCompletedOrders?waitpersonId=" + waiterid;
+        urlpending =  "http://api.urlroute" + waiterid;
+        urlatended = "http://api.urlroute" + waiterid;
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_atendidas);
@@ -85,17 +85,7 @@ public class Activity_Atendidas extends ListActivity {
         new AsyncTaskExample().execute(urlpending);
 
 
-        listView = getListView();//(ListView) findViewById(R.id.list2);
-
-        String[] values = new String[] { "Android List View",
-                "Adapter implementation",
-                "Simple List View In Android",
-                "Create List View Android",
-                "Android Example",
-                "List View Source Code",
-                "List View Array Adapter",
-                "Android Example List View"
-        };
+        listView = getListView();
 
         //Definicion de los adaptadores de datos
         mAdapter = new ArrayAdapter<String>(this,
@@ -162,7 +152,7 @@ public class Activity_Atendidas extends ListActivity {
     }
 
     public void refreshaction(String waiterid){
-        urlatended = "http://api.cluberservice.com/api/Companion/QueryCompletedOrders?waitpersonId=" + waiterid;
+        urlatended = "http://api.urlroute" + waiterid;
         new AsyncTaskAtendidas().execute(urlatended);
     }
 
