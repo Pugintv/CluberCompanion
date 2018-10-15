@@ -15,7 +15,7 @@ import java.net.URL;
  * Created by victorrosas on 2/11/16.
  */
 public class HTTP_Request {
-    String weburl =  "http://api.cluberservice.com/api/";
+    String weburl =  "http://api.exampleurl/api/";
 
     /**
      * Login
@@ -28,7 +28,7 @@ public class HTTP_Request {
     public  JSONObject get_login(String s_mobile,String s_pin) throws IOException, JSONException {
         String url = weburl + "User/VerifyCredentials?mobilePhoneNumber="  +  s_mobile +"&pin=" + s_pin;
         HttpURLConnection urlConnection = (HttpURLConnection) new URL(url).openConnection();
-        urlConnection.addRequestProperty("X-CLUBERAPP-ApiKey", "key_Y2x1YmVyYXBwOkNsdWIzcg==");
+        urlConnection.addRequestProperty("ApiKey", "exampleKey");
         InputStream is = new BufferedInputStream(urlConnection.getInputStream());
         //readJsonStream(is);
         return null;
