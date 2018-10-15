@@ -40,7 +40,7 @@ public class Login extends ActionBarActivity {
 
 ///
 
-    String urlbase = "http://api.cluberservice.com/api"; //"http://apisbx.cluberapp.com/api/";
+    String urlbase = "http://url.route/";
     String isParseInit;
     String istokenactive;
     String isLogged;
@@ -69,11 +69,11 @@ public class Login extends ActionBarActivity {
 
         mainActivity = this;
         NotificationsManager.handleNotifications(this, NotificationSettings.SenderId, MyHandler.class);
-        //registerWithNotificationHubs();
+        registerWithNotificationHubs();
 
         LoginButtonClicked();
         sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
-        isParseInit = sharedPreferences.getString("ParseInit","NO");
+        isParseInit = sharedPreferences.getString("ParseInit","NO"); //Checks if we are still using parse service
         istokenactive = sharedPreferences.getString("prefs_regId","");
         if(isParseInit.equalsIgnoreCase("NO")){
 //            parseInit();
@@ -122,7 +122,6 @@ public class Login extends ActionBarActivity {
     }
 
     public void parseInit(){
-        //Parse.initialize(this, "wptHWdzQOWT8LYaOmTVCZOD3PhU7WjlpQW2keSyi", "4jsVgExUQIiQoVOs1tWIcT32VO6uMGVHHGoR0QOr");
        // ParseInstallation.getCurrentInstallation().saveInBackground();
     }
     public void checkIsLogged(){
@@ -163,7 +162,7 @@ public class Login extends ActionBarActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String url = "http://api.cluberservice.com/api/Companion/SignIn?userName=" + username.getText() + "&password=" + password.getText().toString();
+                        String url = "http://url.route/" + username.getText() + "&password=" + password.getText().toString();
                         new AsyncTaskExample().execute(url);
 
                     }
