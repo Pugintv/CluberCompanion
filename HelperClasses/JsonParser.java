@@ -29,7 +29,7 @@ public class JsonParser {
 
     /*public static JSONObject readJsonFromUrl(String url) throws IOException, JSONException {
         HttpURLConnection urlConnection = (HttpURLConnection) new URL(url).openConnection();
-        urlConnection.addRequestProperty("X-CLUBERAPP-ApiKey", "key_Y2x1YmVyYXBwOkNsdWIzcg==");
+        urlConnection.addRequestProperty("ApiKey", "exampleKey");
         try {
             InputStream in = new BufferedInputStream(urlConnection.getInputStream());
             return readJsonFromStream(in);
@@ -50,7 +50,7 @@ public class JsonParser {
     public static JSONObject readJsonFromUrl(String url) throws IOException, JSONException {
 
         HttpURLConnection urlConnection = (HttpURLConnection) new URL(url).openConnection();
-        urlConnection.addRequestProperty("X-CLUBERAPP-ApiKey", "key_Y2x1YmVyYXBwOkNsdWIzcg==");
+        urlConnection.addRequestProperty("ApiKey", "exampleKey");
         InputStream is = new BufferedInputStream(urlConnection.getInputStream());
 
         try  {
@@ -81,7 +81,7 @@ public class JsonParser {
 
     public static JSONArray readJsonArrayFromURL(String url) throws IOException,JSONException{
         HttpURLConnection urlConnection = (HttpURLConnection) new URL(url).openConnection();
-        urlConnection.addRequestProperty("X-CLUBERAPP-ApiKey", "key_Y2x1YmVyYXBwOkNsdWIzcg==");
+        urlConnection.addRequestProperty("ApiKey", "exampleKey");
         InputStream is = new BufferedInputStream(urlConnection.getInputStream());
         //InputStream is = new URL(url).openStream();
         try  {
@@ -105,7 +105,7 @@ public class JsonParser {
 
     public static JSONObject PostRequest(String url) throws IOException, JSONException {
         HttpURLConnection urlConnection = (HttpURLConnection) new URL(url).openConnection();
-        urlConnection.addRequestProperty("X-CLUBERAPP-ApiKey", "key_Y2x1YmVyYXBwOkNsdWIzcg==");
+        urlConnection.addRequestProperty("ApiKey", "exampleKey");
         urlConnection.setRequestMethod("POST");
         InputStream is = new BufferedInputStream(urlConnection.getInputStream());
 
@@ -125,7 +125,7 @@ public class JsonParser {
 
     public static JSONObject PostdeleteDevice(String url) throws IOException,JSONException{
         HttpURLConnection urlConnection = (HttpURLConnection) new URL(url).openConnection();
-        urlConnection.addRequestProperty("X-CLUBERAPP-ApiKey", "key_Y2x1YmVyYXBwOkNsdWIzcg==");
+        urlConnection.addRequestProperty("ApiKey", "exampleKey");
         urlConnection.setRequestMethod("POST");
         //urlConnection.setRequestProperty("Content-Type", "application/json");
 
@@ -153,7 +153,7 @@ public class JsonParser {
 
     public static String PostRegisterWaitPersonDevice(String url,String Handle,String Tags) throws IOException, JSONException {
         HttpURLConnection urlConnection = (HttpURLConnection) new URL(url).openConnection();
-        urlConnection.addRequestProperty("X-CLUBERAPP-ApiKey", "key_Y2x1YmVyYXBwOkNsdWIzcg==");
+        urlConnection.addRequestProperty("ApiKey", "exampleKey");
         urlConnection.setRequestMethod("POST");
         //urlConnection.setRequestProperty("Content-Type", "application/json");
 
@@ -194,7 +194,7 @@ public class JsonParser {
 
     public static JSONObject PostImage(String url,String id,String base64) throws IOException, JSONException {
         HttpURLConnection urlConnection = (HttpURLConnection) new URL(url).openConnection();
-        urlConnection.addRequestProperty("X-CLUBERAPP-ApiKey", "key_Y2x1YmVyYXBwOkNsdWIzcg==");
+        urlConnection.addRequestProperty("ApiKey", "exampleKey");
         urlConnection.setRequestMethod("POST");
 
         //Agregamos Parametros
