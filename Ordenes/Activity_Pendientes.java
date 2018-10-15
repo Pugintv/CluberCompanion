@@ -74,8 +74,8 @@ public class Activity_Pendientes extends ListActivity {
             saveValue();
         }
         else waiterid = valueSaved();
-        urlpending =  "http://api.cluberservice.com/api/Companion/QueryPendingOrders?waitpersonId=" + waiterid;
-        urlatended = "http://api.cluberservice.com/api/Companion/QueryCompletedOrders?waitpersonId=" + waiterid;
+        urlpending =  "http://api.urlroute/" + waiterid;
+        urlatended = "http://api.urlroute/" + waiterid;
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_pendientes);
@@ -122,7 +122,7 @@ public class Activity_Pendientes extends ListActivity {
                                 for (int position : reverseSortedPositions) {
                                     String Orderid = ordenes[position].OrderId;
                                     String status = "0";
-                                    String url = "http://api.cluberservice.com/api/Companion/ChangeOrderStatus?orderId=" + Orderid + "&status=" + status;
+                                    String url = "http://api.urlroute" + Orderid + "&status=" + status;
                                     new AsyncTaskPost().execute(url);
 
                                     //Eliminamos de los arreglos y lo pasamos al otro tab
